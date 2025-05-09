@@ -512,13 +512,23 @@
             confirmaSenhaInput.addEventListener('input', validatePasswords);
         }
 
-        // Pegar código de convite da URL
+        // Pegar código de convite da URL e preencher automaticamente
         function getInviteCodeFromURL() {
             const urlParams = new URLSearchParams(window.location.search);
-            const ref = urlParams.get('ref');
+            
+            // Verifica vários parâmetros possíveis (ref, referral, invite, code)
+            const ref = urlParams.get('ref') || 
+                       urlParams.get('referral') || 
+                       urlParams.get('invite') || 
+                       urlParams.get('code');
             
             if (ref && document.getElementById('codigo_convite_referido')) {
-                document.getElementById('codigo_convite_referido').value = ref;
+                // Sanitiza o código de convite antes de preencher
+                const sanitizedRef = sanitizeClientInput(ref);
+                document.getElementById('codigo_convite_referido').value = sanitizedRef;
+                
+                // Opcional: desabilita o campo se o código veio da URL
+                // document.getElementById('codigo_convite_referido').readOnly = true;
             }
         }
 
@@ -531,7 +541,7 @@
         });
 
         // Chama a função ao carregar a página
-        window.onload = function() {
+        document.addEventListener('DOMContentLoaded', function() {
             getInviteCodeFromURL();
             
             // Foca no campo de telefone e adiciona máscara
@@ -554,7 +564,7 @@
                     this.value = value;
                 });
             }
-        };
+        });
     </script>
 </body>
 </html>
