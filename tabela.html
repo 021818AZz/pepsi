@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planos de Investimento - Pepsi</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --pepsi-blue: #004B93;
+            --pepsi-red: #EE1133;
+            --pepsi-light-blue: #0066CC;
+            --background: #000000;
+            --text: #ffffff;
+            --text-light: #a0a0a0;
+            --border: #333333;
+        }
+
+        body {
+            background: var(--background);
+            color: var(--text);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            padding: 20px;
+        }
+
+        .investment-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            overflow-x: auto;
+            display: block;
+        }
+
+        .investment-table th {
+            background: linear-gradient(135deg, var(--pepsi-blue), var(--pepsi-light-blue));
+            color: white;
+            padding: 15px 10px;
+            text-align: center;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+        }
+
+        .investment-table td {
+            padding: 12px 10px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .investment-table tr:nth-child(even) {
+            background-color: rgba(255, 255, 255, 0.03);
+        }
+
+        .investment-table tr:hover {
+            background-color: rgba(0, 75, 147, 0.1);
+        }
+
+        .plan-badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .vip1 {
+            background: linear-gradient(135deg, #3498db, #2ecc71);
+        }
+
+        .vip2 {
+            background: linear-gradient(135deg, #f39c12, #e74c3c);
+        }
+
+        .vip3 {
+            background: linear-gradient(135deg, #9b59b6, #e74c3c);
+        }
+
+        .vip4 {
+            background: linear-gradient(135deg, #1abc9c, #2ecc71);
+        }
+
+        .vip5 {
+            background: linear-gradient(135deg, #e74c3c, #f39c12);
+        }
+
+        .vip6 {
+            background: linear-gradient(135deg, #004B93, #EE1133);
+        }
+
+        .income-value {
+            font-weight: bold;
+            color: #2ecc71;
+        }
+
+        .cycle-value {
+            font-weight: bold;
+            color: #3498db;
+        }
+
+        .price-value {
+            font-weight: bold;
+            color: #f1c40f;
+        }
+
+        .action-btn {
+            background: linear-gradient(135deg, var(--pepsi-blue), var(--pepsi-light-blue));
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0, 75, 147, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .investment-table {
+                font-size: 14px;
+            }
+            
+            .investment-table th, 
+            .investment-table td {
+                padding: 10px 5px;
+            }
+            
+            .plan-badge {
+                font-size: 12px;
+                padding: 3px 8px;
+            }
+            
+            .action-btn {
+                padding: 6px 10px;
+                font-size: 12px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .investment-table {
+                font-size: 12px;
+            }
+            
+            .hide-on-mobile {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container mx-auto">
+        <h1 class="text-2xl font-bold text-center mb-6" style="color: #EE1133;">PLANOS DE INVESTIMENTO PEPSI</h1>
+        
+        <div class="overflow-x-auto">
+            <table class="investment-table">
+                <thead>
+                    <tr>
+                        <th>Plano</th>
+                        <th>Investimento</th>
+                        <th class="hide-on-mobile">Renda Diária (7%)</th>
+                        <th>Renda Total</th>
+                        <th>Ciclo</th>
+                        <th>Ação</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- VIP 1 -->
+                    <tr>
+                        <td><span class="plan-badge vip1">VIP 1</span></td>
+                        <td class="price-value">AOA 6.000</td>
+                        <td class="income-value hide-on-mobile">AOA 420</td>
+                        <td class="income-value">AOA 50.400</td>
+                        <td class="cycle-value">120 dias</td>
+                        <td><button class="action-btn">Investir</button></td>
+                    </tr>
+                    
+                    <!-- VIP 2 -->
+                    <tr>
+                        <td><span class="plan-badge vip2">VIP 2</span></td>
+                        <td class="price-value">AOA 15.000</td>
+                        <td class="income-value hide-on-mobile">AOA 1.050</td>
+                        <td class="income-value">AOA 126.000</td>
+                        <td class="cycle-value">120 dias</td>
+                        <td><button class="action-btn">Investir</button></td>
+                    </tr>
+                    
+                    <!-- VIP 3 -->
+                    <tr>
+                        <td><span class="plan-badge vip3">VIP 3</span></td>
+                        <td class="price-value">AOA 50.000</td>
+                        <td class="income-value hide-on-mobile">AOA 3.500</td>
+                        <td class="income-value">AOA 420.000</td>
+                        <td class="cycle-value">120 dias</td>
+                        <td><button class="action-btn">Investir</button></td>
+                    </tr>
+                    
+                    <!-- VIP 4 -->
+                    <tr>
+                        <td><span class="plan-badge vip4">VIP 4</span></td>
+                        <td class="price-value">AOA 150.000</td>
+                        <td class="income-value hide-on-mobile">AOA 10.500</td>
+                        <td class="income-value">AOA 1.260.000</td>
+                        <td class="cycle-value">120 dias</td>
+                        <td><button class="action-btn">Investir</button></td>
+                    </tr>
+                    
+                    <!-- VIP 5 -->
+                    <tr>
+                        <td><span class="plan-badge vip5">VIP 5</span></td>
+                        <td class="price-value">AOA 500.000</td>
+                        <td class="income-value hide-on-mobile">AOA 35.000</td>
+                        <td class="income-value">AOA 4.200.000</td>
+                        <td class="cycle-value">120 dias</td>
+                        <td><button class="action-btn">Investir</button></td>
+                    </tr>
+                    
+                    <!-- VIP 6 -->
+                    <tr>
+                        <td><span class="plan-badge vip6">VIP 6</span></td>
+                        <td class="price-value">AOA 1.000.000</td>
+                        <td class="income-value hide-on-mobile">AOA 70.000</td>
+                        <td class="income-value">AOA 8.400.000</td>
+                        <td class="cycle-value">120 dias</td>
+                        <td><button class="action-btn">Investir</button></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="mt-8 p-4 rounded-lg" style="background: rgba(0, 75, 147, 0.1); border-left: 4px solid #EE1133;">
+            <h3 class="font-bold mb-2" style="color: #0066CC;">Informações Importantes:</h3>
+            <ul class="list-disc pl-5 space-y-1 text-sm">
+                <li>Todos os planos têm um ciclo de <strong>120 dias</strong></li>
+                <li>A renda diária é de <strong>7%</strong> sobre o valor investido</li>
+                <li>Os pagamentos são feitos diariamente</li>
+                <li>Você pode ter múltiplos investimentos ativos</li>
+                <li>O capital investido não é reembolsável</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // Função para redirecionar para a página de investimento
+        document.querySelectorAll('.action-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const plan = this.closest('tr').querySelector('.plan-badge').textContent.trim().toLowerCase().replace(' ', '');
+                window.location.href = `${plan}.html`;
+            });
+        });
+
+        // Efeito hover nas linhas da tabela
+        document.querySelectorAll('.investment-table tbody tr').forEach(row => {
+            row.addEventListener('mouseenter', function() {
+                this.style.transition = 'all 0.3s ease';
+                this.style.transform = 'scale(1.01)';
+            });
+            
+            row.addEventListener('mouseleave', function() {
+                this.style.transform = 'scale(1)';
+            });
+        });
+    </script>
+</body>
+</html>

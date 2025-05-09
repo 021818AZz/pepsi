@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pepsi - Carteira</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        :root {
+            --pepsi-blue: #004B93;
+            --pepsi-red: #EE1133;
+            --pepsi-light-blue: #0066CC;
+            --background: #000000;
+            --text: #ffffff;
+            --text-light: #a0a0a0;
+            --border: #333333;
+            --card-gradient: linear-gradient(145deg, #004B93, #0066CC);
+            --card-shine: linear-gradient(35deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0) 100%);
+        }
+
+        body {
+            background: var(--background);
+            color: var(--text);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            min-height: 100vh;
+            padding-bottom: 80px;
+        }
+
+        .portfolio-card {
+            background: var(--card-gradient);
+            position: relative;
+            border-radius: 20px;
+            padding: 25px;
+            color: white;
+            margin: 16px;
+            box-shadow: 0 10px 30px rgba(0, 75, 147, 0.3);
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .portfolio-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 200%;
+            height: 100%;
+            background: var(--card-shine);
+            transform: rotate(25deg);
+            animation: shine 8s infinite linear;
+        }
+        
+        @keyframes shine {
+            0% { transform: translateX(-100%) rotate(25deg); }
+            100% { transform: translateX(100%) rotate(25deg); }
+        }
+
+        .investment-card {
+            background: linear-gradient(145deg, #111111, #1a1a1a);
+            border: 1px solid rgba(0, 75, 147, 0.2);
+            border-radius: 16px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            margin: 16px;
+            padding: 16px;
+        }
+
+        .investment-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(0, 75, 147, 0.4);
+            box-shadow: 0 8px 30px rgba(0, 75, 147, 0.4);
+        }
+
+        .progress-bar {
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 8px 0;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--pepsi-blue), var(--pepsi-light-blue));
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+
+        .progress-bar-fill.ending-soon {
+            background: linear-gradient(90deg, #ef4444, #dc2626);
+        }
+
+        .progress-bar-fill.mid-term {
+            background: linear-gradient(90deg, #f59e0b, #d97706);
+        }
+
+        .progress-bar-fill.healthy {
+            background: linear-gradient(90deg, #10b981, #059669);
+        }
+
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(17, 17, 17, 0.95);
+            border-top: 1px solid rgba(0, 75, 147, 0.2);
+            padding: 12px;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .nav-container {
+            max-width: 500px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-around;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 12px;
+            gap: 4px;
+            padding: 8px 16px;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-item:hover {
+            color: white;
+            background: rgba(0, 75, 147, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .nav-item i {
+            font-size: 22px;
+            background: linear-gradient(45deg, var(--pepsi-blue), var(--pepsi-light-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 2px 4px rgba(0, 75, 147, 0.2));
+        }
+
+        .nav-item.active {
+            color: white;
+            background: rgba(0, 75, 147, 0.15);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            padding: 16px;
+        }
+
+        .stat-card {
+            background: linear-gradient(145deg, #111111, #1a1a1a);
+            border: 1px solid rgba(0, 75, 147, 0.2);
+            border-radius: 16px;
+            padding: 18px;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(0, 75, 147, 0.4);
+            box-shadow: 0 8px 30px rgba(0, 75, 147, 0.4);
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        /* Estilos para os valores no card principal */
+        .portfolio-value {
+            font-size: 1.1rem;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+            margin-top: 4px;
+        }
+        
+        /* Estilos compactos para os cards de investimento */
+        .compact-text {
+            font-size: 0.72rem;
+            line-height: 1.2;
+        }
+        
+        .compact-value {
+            font-size: 0.82rem;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+        
+        .compact-header {
+            font-size: 0.85rem;
+            margin-bottom: 2px;
+            font-weight: bold;
+        }
+        
+        .compact-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 6px;
+        }
+        
+        .compact-flex {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        /* Garante que os valores nos cards de investimento não quebrem linha */
+        .no-wrap {
+            white-space: nowrap;
+        }
+        
+        .currency-symbol {
+            font-size: 0.9em;
+            margin-right: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mx-auto px-4 py-6">
+        <!-- Portfolio Overview -->
+        <div class="portfolio-card">
+            <div class="flex justify-between items-center mb-4">
+                <div>
+                    <h2 class="text-xl font-bold">Minha Carteira</h2>
+                    <p class="text-white/70 text-sm">Visão geral dos seus investimentos</p>
+                </div>
+                <div class="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center">
+                    <i class="fas fa-wallet text-xl"></i>
+                </div>
+            </div>
+            <div class="grid grid-cols-3 gap-3">
+                <div>
+                    <p class="text-white/70 text-xs">Total Investido</p>
+                    <p id="total-invested" class="portfolio-value"><span class="currency-symbol"></span> <span class="amount">0,00</span></p>
+                </div>
+                <div>
+                    <p class="text-white/70 text-xs">Renda Diária</p>
+                    <p id="daily-income" class="portfolio-value"><span class="currency-symbol"></span> <span class="amount">0,00</span></p>
+                </div>
+                <div>
+                    <p class="text-white/70 text-xs">Total produtos</p>
+                    <p id="active-investments" class="portfolio-value"><span class="amount">0</span></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Investments Container -->
+        <div id="investments-container"></div>
+
+        <!-- Empty State -->
+        <div id="empty-state" class="text-center py-10">
+            <div class="w-16 h-16 bg-[#004B93]/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-chart-line text-2xl text-[#0066CC]"></i>
+            </div>
+            <h3 class="text-xl font-bold mb-3">Nenhum Investimento Ativo</h3>
+            <p class="text-gray-400 text-sm mb-6">Comece agora mesmo a investir e gerar renda diária!</p>
+            <a href="inicio.html" 
+               class="inline-flex items-center px-5 py-2 bg-[#004B93] text-white font-semibold rounded-lg 
+                      hover:bg-[#0066CC] transition-all duration-300 gap-2 text-sm">
+                <i class="fas fa-plus"></i>
+                Começar a Investir
+            </a>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <div class="nav-container">
+            <a href="inicio.html" class="nav-item">
+                <i class="fas fa-home-alt"></i>
+                <span>Início</span>
+            </a>
+            <a href="rede.html" class="nav-item">
+                <i class="fas fa-user-friends"></i>
+                <span>Convidar</span>
+            </a>
+           
+            <a href="carteira.html" class="nav-item active">
+                <i class="fas fa-wallet"></i>
+                <span>Carteira</span>
+            </a>
+            <a href="perfil.html" class="nav-item">
+                <i class="fas fa-user-circle"></i>
+                <span>Perfil</span>
+            </a>
+        </div>
+    </nav>
+
+    <script>
+        // Função para formatar valores numéricos (sem símbolo de moeda)
+        function formatNumber(value) {
+            return new Intl.NumberFormat('pt-AO', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }).format(value);
+        }
+    
+        // Função para calcular dias restantes e progresso
+        function calculateInvestmentProgress(investment) {
+            const startDate = new Date(investment.dataCompra);
+            const today = new Date();
+            const daysPassed = Math.floor((today - startDate) / (1000 * 60 * 60 * 24));
+            const daysLeft = Math.max(0, investment.prazo - daysPassed);
+            const progress = Math.min((daysPassed / investment.prazo) * 100, 100);
+    
+            return {
+                daysPassed,
+                daysLeft,
+                progress
+            };
+        }
+    
+        // Função para criar o card de investimento (versão compacta)
+        function createInvestmentCard(investment) {
+            const progressData = calculateInvestmentProgress(investment);
+            const accumulatedIncome = progressData.daysPassed * investment.renda_diaria;
+    
+            const card = document.createElement('div');
+            card.className = 'investment-card';
+            card.innerHTML = `
+                <div class="compact-flex mb-2">
+                    <div class="min-w-0">
+                        <h3 class="compact-header truncate">${investment.produto}</h3>
+                        <p class="compact-text text-gray-400 truncate">Investido: <span class="compact-value no-wrap">AOA ${formatNumber(investment.preco)}</span></p>
+                    </div>
+                    <div class="text-right min-w-0">
+                        <p class="compact-value text-green-400 no-wrap">+AOA ${formatNumber(investment.renda_diaria)}/dia</p>
+                        <p class="compact-text text-gray-400 truncate">Total: <span class="compact-value no-wrap">AOA ${formatNumber(investment.renda_total)}</span></p>
+                    </div>
+                </div>
+    
+                <div class="my-2">
+                    <div class="compact-flex compact-text text-gray-400 mb-1">
+                        <span class="truncate">Iniciado em ${new Date(investment.dataCompra).toLocaleDateString('pt-BR', {day: '2-digit', month: '2-digit'})}</span>
+                        <span class="no-wrap">${progressData.daysLeft}d restantes</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-bar-fill" style="width: ${progressData.progress}%"></div>
+                    </div>
+                </div>
+    
+                <div class="compact-grid compact-text mt-2">
+                    <div class="min-w-0">
+                        <p class="text-gray-400">Dias decorridos</p>
+                        <p class="compact-value no-wrap">${progressData.daysPassed}/${investment.prazo}</p>
+                    </div>
+                    <div class="min-w-0">
+                        <p class="text-gray-400">Renda acumulada</p>
+                        <p class="compact-value no-wrap">AOA ${formatNumber(accumulatedIncome)}</p>
+                    </div>
+                </div>
+            `;
+    
+            return card;
+        }
+    
+        // Função para buscar e exibir os investimentos do usuário logado
+        async function fetchAndDisplayInvestments() {
+            try {
+                const userData = JSON.parse(localStorage.getItem('user_data'));
+                if (!userData || !userData.id) {
+                    console.error('Usuário não autenticado.');
+                    return;
+                }
+    
+                const userId = userData.id;
+    
+                // Buscar investimentos
+                const investmentsResponse = await fetch(`https://api-wped.onrender.com/depositos?userId=${userId}`);
+                const investments = await investmentsResponse.json();
+    
+                // Buscar saldo
+                const balanceResponse = await fetch(`https://api-wped.onrender.com/retiradas?userId=${userId}`);
+                const balanceData = await balanceResponse.json();
+    
+                const container = document.getElementById('investments-container');
+                const emptyState = document.getElementById('empty-state');
+    
+                if (investments && investments.length > 0) {
+                    const totalInvested = investments.reduce((sum, inv) => sum + inv.preco, 0);
+                    const dailyIncome = investments.reduce((sum, inv) => sum + inv.renda_diaria, 0);
+    
+                    // Atualiza apenas os valores numéricos, mantendo o "AOA" no HTML
+                    document.querySelector('#total-invested .amount').textContent = formatNumber(totalInvested);
+                    document.querySelector('#daily-income .amount').textContent = formatNumber(dailyIncome);
+                    document.querySelector('#active-investments .amount').textContent = investments.length;
+    
+                    emptyState.classList.add('hidden');
+                    container.innerHTML = '';
+    
+                    investments.forEach(investment => {
+                        container.appendChild(createInvestmentCard(investment));
+                    });
+                } else {
+                    emptyState.classList.remove('hidden');
+    
+                    document.querySelector('#total-invested .amount').textContent = '0,00';
+                    document.querySelector('#daily-income .amount').textContent = '0,00';
+                    document.querySelector('#active-investments .amount').textContent = '0';
+                }
+    
+                if (balanceData && balanceData.length > 0) {
+                    console.log('Saldo do usuário:', balanceData[0].saldo);
+                }
+            } catch (error) {
+                console.error('Erro ao carregar dados:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Erro',
+                    text: 'Não foi possível carregar os dados. Por favor, tente novamente mais tarde.',
+                });
+            }
+        }
+    
+        // Executar quando a página estiver pronta
+        document.addEventListener('DOMContentLoaded', () => {
+            // Ativar item de navegação (se tiver)
+            const currentPath = window.location.pathname;
+            document.querySelectorAll('.nav-item').forEach(item => {
+                if (currentPath.includes(item.getAttribute('href'))) {
+                    item.classList.add('active');
+                }
+            });
+    
+            // Carregar os investimentos
+            fetchAndDisplayInvestments();
+        });
+    </script>
+</body>
+</html>

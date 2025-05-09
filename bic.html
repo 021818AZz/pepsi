@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="pt-AO">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pepsi - Pagamento BIC</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        :root {
+            --pepsi-blue: #004B93;
+            --pepsi-red: #EE1133;
+            --pepsi-light-blue: #0066CC;
+            --background: #000000;
+            --text: #ffffff;
+            --text-light: #a0a0a0;
+            --border: #333333;
+            --card-gradient: linear-gradient(145deg, #004B93, #0066CC);
+            --card-shine: linear-gradient(35deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0) 100%);
+        }
+
+        body {
+            background: var(--background);
+            color: var(--text);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            min-height: 100vh;
+            padding-bottom: 80px;
+        }
+
+        .payment-card {
+            background: linear-gradient(145deg, #111111, #1a1a1a);
+            border-radius: 20px;
+            padding: 30px;
+            color: white;
+            margin: 16px;
+            box-shadow: 0 10px 30px rgba(0, 75, 147, 0.3);
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+        }
+        
+        .payment-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 200%;
+            height: 100%;
+            background: var(--card-shine);
+            transform: rotate(25deg);
+            animation: shine 8s infinite linear;
+        }
+        
+        @keyframes shine {
+            0% { transform: translateX(-100%) rotate(25deg); }
+            100% { transform: translateX(100%) rotate(25deg); }
+        }
+
+        .bank-info {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+
+        .bank-detail {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .bank-detail:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .upload-area {
+            border: 2px dashed rgba(255, 255, 255, 0.3);
+            border-radius: 16px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+
+        .upload-area:hover {
+            border-color: var(--pepsi-light-blue);
+            background: rgba(0, 75, 147, 0.1);
+        }
+
+        .upload-area.active {
+            border-color: var(--pepsi-light-blue);
+            background: rgba(0, 75, 147, 0.1);
+        }
+
+        #previewImage {
+            max-width: 100%;
+            max-height: 200px;
+            margin-top: 15px;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .submit-button {
+            background: linear-gradient(135deg, var(--pepsi-blue), var(--pepsi-light-blue));
+            color: white;
+            border: none;
+            width: 100%;
+            padding: 16px;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .submit-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 75, 147, 0.3);
+        }
+
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(17, 17, 17, 0.95);
+            border-top: 1px solid rgba(0, 75, 147, 0.2);
+            padding: 12px;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .nav-container {
+            max-width: 500px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-around;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 12px;
+            gap: 4px;
+            padding: 8px 16px;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-item:hover {
+            color: white;
+            background: rgba(0, 75, 147, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .nav-item i {
+            font-size: 22px;
+            background: linear-gradient(45deg, var(--pepsi-blue), var(--pepsi-light-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-item.active {
+            color: white;
+            background: rgba(0, 75, 147, 0.15);
+        }
+
+        /* Estilos melhorados para os botões de copiar */
+        .copyable-field {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 8px 12px;
+            transition: all 0.2s;
+            cursor: pointer;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .copyable-field:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(0, 107, 214, 0.3);
+        }
+
+        .copyable-field .text {
+            flex-grow: 1;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .copyable-field .copy-btn {
+            background: rgba(0, 75, 147, 0.3);
+            border-radius: 6px;
+            padding: 6px 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .copyable-field:hover .copy-btn {
+            background: rgba(0, 107, 214, 0.5);
+        }
+
+        .copyable-field .copy-btn i {
+            font-size: 14px;
+            color: white;
+        }
+
+        .copyable-field.copied {
+            background: rgba(0, 200, 83, 0.1);
+            border-color: rgba(0, 200, 83, 0.3);
+        }
+
+        .copyable-field.copied .copy-btn {
+            background: rgba(0, 200, 83, 0.5);
+        }
+
+        .copyable-field.copied .copy-btn i {
+            color: #00c853;
+        }
+
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 120px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -60px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 12px;
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mx-auto px-4 py-8">
+        <!-- Header Card -->
+        <div class="payment-card mb-8">
+            <div class="flex items-center justify-center mb-6">
+                <div class="w-20 h-20 bg-white/10 rounded-full flex items-center justify-center">
+                    <img src="https://www.bancobic.ao/application/images/logos/BIC_HOR_B1_POS_BR.png?language_id=3" 
+                         alt="BIC Logo" 
+                         class="h-12">
+                </div>
+            </div>
+            <h1 class="text-2xl font-bold text-center mb-2">Pagamento via BIC</h1>
+            <p class="text-center text-white/70">Complete os dados para o depósito</p>
+            
+            <!-- Valor do Depósito -->
+            <div class="bg-[#004B93]/20 rounded-xl p-4 text-center mt-6">
+                <p class="text-sm text-white/70">Valor a depositar</p>
+                <p id="valorDeposito" class="text-2xl font-bold">AOA 0,00</p>
+            </div>
+        </div>
+
+        <!-- Dados Bancários -->
+        <div class="bank-info mb-6">
+            <h2 class="text-xl font-bold mb-4">Dados para Transferência</h2>
+            
+            <div class="bank-detail">
+                <span class="text-white/70">Nome do Administrador</span>
+                <div class="tooltip">
+                    <div id="adminField" class="copyable-field" onclick="copyToClipboard('adm')">
+                        <span class="text">vin</span>
+                        <span class="copy-btn">
+                            <i class="fas fa-copy"></i>
+                        </span>
+                        <span class="tooltiptext">Clique para copiar</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bank-detail">
+                <span class="text-white/70">Número da Conta (IBAN)</span>
+                <div class="tooltip">
+                    <div id="ibanField" class="copyable-field" onclick="copyToClipboard('ibanField', '004000004321123410194')">
+                        <span class="text">004000004321123410194</span>
+                        <span class="copy-btn">
+                            <i class="fas fa-copy"></i>
+                        </span>
+                        <span class="tooltiptext">Clique para copiar</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bank-detail">
+                <span class="text-white/70">Banco</span>
+                <span class="font-medium">BIC</span>
+            </div>
+        </div>
+
+        <!-- Formulário de Envio -->
+        <div class="mb-6">
+            <label class="block text-white/70 mb-2">Seu Número da conta da plataforma</label>
+            <input type="text" 
+                   id="nomePagador" 
+                   class="w-full p-4 rounded-lg bg-gray-800 border border-gray-700 mb-4" 
+                   placeholder="Digite seu numero aqui"
+                   required>
+            
+            <label class="block text-white/70 mb-2">Comprovativo de Transferência</label>
+            <div class="upload-area" id="uploadArea">
+                <input type="file" id="comprovativo" accept="image/*" class="hidden">
+                <i class="fas fa-cloud-upload-alt text-4xl text-blue-400 mb-2"></i>
+                <p>Clique ou arraste o comprovativo</p>
+                <p class="text-sm text-white/50 mt-1">Formatos aceitos</p>
+                <img id="previewImage">
+            </div>
+        </div>
+
+        <button id="submitBtn" class="submit-button" disabled>
+            <i class="fas fa-paper-plane mr-2"></i> Enviar Comprovativo
+        </button>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <div class="nav-container">
+            <a href="inicio.html" class="nav-item">
+                <i class="fas fa-home-alt"></i>
+                <span>Início</span>
+            </a>
+            <a href="rede.html" class="nav-item">
+                <i class="fas fa-user-friends"></i>
+                <span>Rede</span>
+            </a>
+            <a href="carteira.html" class="nav-item">
+                <i class="fas fa-chart-bar"></i>
+                <span>Carteira</span>
+            </a>
+            <a href="perfil.html" class="nav-item active">
+                <i class="fas fa-user-circle"></i>
+                <span>Perfil</span>
+            </a>
+        </div>
+    </nav>
+
+    <script>
+        // Recupera os dados do localStorage
+        document.addEventListener('DOMContentLoaded', function() {
+            const valor = localStorage.getItem('valorDeposito');
+            const banco = localStorage.getItem('bancoSelecionado');
+            
+            if (!valor || banco !== 'bic') {
+                window.location.href = 'selecionar-banco.html';
+                return;
+            }
+            
+            // Formata o valor
+            document.getElementById('valorDeposito').textContent = 
+                'AOA ' + parseFloat(valor).toLocaleString('pt-AO', {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                });
+
+            // Marca o item de navegação ativo
+            const currentPath = window.location.pathname;
+            document.querySelectorAll('.nav-item').forEach(item => {
+                if (currentPath.includes(item.getAttribute('href'))) {
+                    item.classList.add('active');
+                }
+            });
+        });
+
+        // Upload do comprovativo
+        const uploadArea = document.getElementById('uploadArea');
+        const comprovativoInput = document.getElementById('comprovativo');
+        const previewImage = document.getElementById('previewImage');
+        const submitBtn = document.getElementById('submitBtn');
+        let comprovativoBase64 = null;
+
+        uploadArea.addEventListener('click', () => comprovativoInput.click());
+        
+        comprovativoInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                // Verifica o tamanho do arquivo (máx 5MB)
+                if (file.size > 5 * 1024 * 1024) {
+                    alert('O arquivo é muito grande (máximo 5MB)');
+                    return;
+                }
+                
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    previewImage.src = event.target.result;
+                    previewImage.style.display = 'block';
+                    comprovativoBase64 = event.target.result.split(',')[1];
+                    checkForm();
+                };
+                reader.readAsDataURL(file);
+                uploadArea.classList.add('active');
+            }
+        });
+
+        // Drag and drop
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('active');
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('active');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('active');
+            comprovativoInput.files = e.dataTransfer.files;
+            const event = new Event('change');
+            comprovativoInput.dispatchEvent(event);
+        });
+
+        // Verifica se o formulário está completo
+        function checkForm() {
+            if (document.getElementById('nomePagador').value && comprovativoBase64) {
+                submitBtn.disabled = false;
+            } else {
+                submitBtn.disabled = true;
+            }
+        }
+
+        document.getElementById('nomePagador').addEventListener('input', checkForm);
+
+        // Copiar texto - função melhorada
+        function copyToClipboard(elementId, textToCopy) {
+            const element = document.getElementById(elementId);
+            
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                // Adiciona efeito visual de copiado
+                element.classList.add('copied');
+                const copyIcon = element.querySelector('.copy-btn i');
+                copyIcon.classList.remove('fa-copy');
+                copyIcon.classList.add('fa-check');
+                
+                // Tooltip de feedback
+                const tooltip = element.parentElement.querySelector('.tooltiptext');
+                if (tooltip) {
+                    tooltip.textContent = 'Copiado!';
+                    setTimeout(() => {
+                        tooltip.textContent = 'Clique para copiar';
+                    }, 2000);
+                }
+                
+                // Retorna ao estado original após 2 segundos
+                setTimeout(() => {
+                    element.classList.remove('copied');
+                    copyIcon.classList.remove('fa-check');
+                    copyIcon.classList.add('fa-copy');
+                }, 2000);
+            }).catch(err => {
+                console.error('Erro ao copiar:', err);
+                const tooltip = element.parentElement.querySelector('.tooltiptext');
+                if (tooltip) {
+                    tooltip.textContent = 'Erro ao copiar';
+                    setTimeout(() => {
+                        tooltip.textContent = 'Clique para copiar';
+                    }, 2000);
+                }
+            });
+        }
+
+        // Enviar comprovativo
+        submitBtn.addEventListener('click', async function() {
+            const userData = JSON.parse(localStorage.getItem('user_data'));
+            if (!userData || !userData.id) {
+                alert('Usuário não autenticado');
+                return;
+            }
+
+            const valor = localStorage.getItem('valorDeposito');
+            const nomePagador = document.getElementById('nomePagador').value;
+
+            // Mostrar loading
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
+            submitBtn.disabled = true;
+
+            // Dados para enviar
+            const data = {
+                userId: userData.id,
+                nome: nomePagador,
+                banco: 'BIC',
+                valor: parseFloat(valor),
+                comprovativo: comprovativoBase64,
+                status: 'pending',
+                data: new Date().toISOString()
+            };
+
+            try {
+                // Envia para a API VIP (histórico)
+                const response = await fetch('https://api-wped.onrender.com/vip', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Sucesso!',
+                        text: 'Comprovativo enviado para aprovação',
+                        background: '#1a1a1a',
+                        color: '#ffffff',
+                        confirmButtonColor: '#004B93'
+                    }).then(() => {
+                        window.location.href = 'perfil.html';
+                    });
+                } else {
+                    throw new Error(result.message || 'Erro ao enviar comprovativo');
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Erro',
+                    text: error.message || 'Ocorreu um erro ao enviar o comprovativo',
+                    background: '#1a1a1a',
+                    color: '#ffffff',
+                    confirmButtonColor: '#004B93'
+                });
+                submitBtn.innerHTML = '<i class="fas fa-paper-plane mr-2"></i> Enviar Comprovativo';
+                submitBtn.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>

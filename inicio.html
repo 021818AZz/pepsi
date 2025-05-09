@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pepsi</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --pepsi-blue: #004B93;
+            --pepsi-red: #EE1133;
+            --pepsi-light-blue: #0066CC;
+            --background: #000000;
+            --text: #ffffff;
+            --text-light: #a0a0a0;
+            --border: #333333;
+            --card-gradient: linear-gradient(145deg, #004B93, #0066CC);
+            --card-shine: linear-gradient(35deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0) 100%);
+        }
+
+        body {
+            background: var(--background);
+            color: var(--text);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            min-height: 100vh;
+            padding-bottom: 80px;
+        }
+
+        .balance-card {
+            background: var(--card-gradient);
+            position: relative;
+            border-radius: 20px;
+            padding: 30px;
+            color: white;
+            margin: 16px;
+            box-shadow: 0 10px 30px rgba(0, 75, 147, 0.3);
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .balance-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 200%;
+            height: 100%;
+            background: var(--card-shine);
+            transform: rotate(25deg);
+            animation: shine 8s infinite linear;
+        }
+        
+        @keyframes shine {
+            0% { transform: translateX(-100%) rotate(25deg); }
+            100% { transform: translateX(100%) rotate(25deg); }
+        }
+
+        .balance-value {
+            font-size: 38px;
+            font-weight: bold;
+            margin: 16px 0;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            letter-spacing: -0.5px;
+        }
+
+        .banner-slider {
+            width: 100%;
+            height: 200px;
+            overflow: hidden;
+            position: relative;
+            margin-bottom: 24px;
+        }
+
+        .banner-track {
+            display: flex;
+            width: 300%;
+            height: 100%;
+            animation: slide 15s infinite ease-in-out;
+        }
+
+        .banner-slide {
+            width: 33.333%;
+            height: 100%;
+            position: relative;
+        }
+
+        .banner-slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        @keyframes slide {
+            0%, 28% { transform: translateX(0); }
+            33%, 61% { transform: translateX(-33.333%); }
+            66%, 94% { transform: translateX(-66.666%); }
+            100% { transform: translateX(0); }
+        }
+
+        .action-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            padding: 16px;
+        }
+
+        .action-button {
+            background: linear-gradient(145deg, #111111, #1a1a1a);
+            border: 1px solid rgba(0, 75, 147, 0.2);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .action-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(0, 75, 147, 0.4);
+            border-color: rgba(0, 75, 147, 0.4);
+        }
+
+        .action-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(0, 75, 147, 0.1),
+                transparent
+            );
+            transition: 0.5s;
+        }
+
+        .action-button:hover::before {
+            left: 100%;
+        }
+
+        .action-button i {
+            font-size: 28px;
+            color: var(--pepsi-blue);
+            margin-bottom: 8px;
+            background: linear-gradient(45deg, var(--pepsi-blue), var(--pepsi-light-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 2px 4px rgba(0, 75, 147, 0.3));
+        }
+
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(17, 17, 17, 0.95);
+            border-top: 1px solid rgba(0, 75, 147, 0.2);
+            padding: 12px;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .nav-container {
+            max-width: 500px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-around;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 12px;
+            gap: 4px;
+            padding: 8px 16px;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-item:hover {
+            color: white;
+            background: rgba(0, 75, 147, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .nav-item i {
+            font-size: 22px;
+            background: linear-gradient(45deg, var(--pepsi-blue), var(--pepsi-light-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 2px 4px rgba(0, 75, 147, 0.2));
+        }
+
+        .nav-item.active {
+            color: white;
+            background: rgba(0, 75, 147, 0.15);
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal {
+            background: rgba(17, 17, 17, 0.95);
+            padding: 24px;
+            border-radius: 20px;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            border: 1px solid rgba(0, 75, 147, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 75, 147, 0.4);
+            backdrop-filter: blur(10px);
+            animation: modalSlideUp 0.3s ease-out;
+        }
+
+        @keyframes modalSlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal button {
+            background: linear-gradient(to right, var(--pepsi-blue), var(--pepsi-light-blue));
+            color: white;
+            border: none;
+            padding: 14px 32px;
+            border-radius: 12px;
+            font-weight: 600;
+            margin-top: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .modal button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 75, 147, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <!-- Banner Slider -->
+    <div class="banner-slider">
+        <div class="banner-track">
+            <div class="banner-slide">
+                <img src="https://images.unsplash.com/photo-1622483767028-3f66f32aef97?auto=format&fit=crop&w=2000&q=80" 
+                     alt="Pepsi Investment 1">
+            </div>
+            <div class="banner-slide">
+                <img src="https://images.unsplash.com/photo-1629203851122-3726ecdf080e?auto=format&fit=crop&w=2000&q=80" 
+                     alt="Pepsi Investment 2">
+            </div>
+            <div class="banner-slide">
+                <img src="https://images.unsplash.com/photo-1553456558-aff63285bdd1?auto=format&fit=crop&w=2000&q=80" 
+                     alt="Pepsi Investment 3">
+            </div>
+        </div>
+    </div>
+
+    <!-- Balance Cards -->
+    <div class="balance-card">
+        <div class="flex justify-between items-center">
+            <span class="text-lg font-semibold">Saldo Disponível</span>
+            <i class="fas fa-wallet text-3xl opacity-75"></i>
+        </div>
+        <div class="balance-value" id="userBalance">
+            KZ 0,00
+        </div>
+        
+        <div class="flex justify-between items-center mt-4 pt-4 border-t border-white/10">
+            <div>
+                <div class="text-sm opacity-75">Saldo Comissões</div>
+                <div class="text-lg font-semibold" id="userCommissions">
+                    KZ 0,00
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Live Activity Feed -->
+    <div class="px-4 mb-6">
+        <div class="bg-gray-900/50 rounded-xl p-4 border border-[#004B93]/10">
+            <div class="activity-feed" id="activityFeed">
+                <!-- Activities will be inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Action Grid -->
+    <div class="action-grid">
+        <a href="deposito.html" class="action-button">
+            <i class="fas fa-coins"></i>
+            <div class="mt-2 font-semibold">Depositar</div>
+            <div class="mt-1 text-xs text-[#0066CC] font-medium animate-pulse">
+                Deposite e ganhe Bônus
+            </div>
+        </a>
+        <a href="javascript:void(0);" onclick="abrirSaqueModal()" class="action-button">
+            <i class="fas fa-hand-holding-usd"></i>
+            <div class="mt-2 font-semibold">Sacar</div>
+        </a>
+        <a href="rede.html" class="action-button">
+            <i class="fas fa-user-friends"></i>
+            <div class="mt-2 font-semibold">Minha Rede</div>
+            <div class="mt-1 text-xs text-[#0066CC] font-medium animate-pulse">
+                Convide e ganhe até KZ200.000
+            </div>
+        </a>
+        
+        <!-- Botão de Ranking -->
+        <a href="ranking.html" class="action-button">
+            <i class="fas fa-trophy"></i>
+            <div class="mt-2 font-semibold">Ranking</div>
+            <div class="mt-1 text-xs text-[#0066CC] font-medium animate-pulse">
+                Veja os melhores colocados!
+            </div>
+        </a>
+
+        <!-- Botão da Roleta -->
+        <a href="" class="action-button">
+            <i class="fas fa-dice"></i>
+            <div class="mt-2 font-semibold">Roleta Premiada</div>
+            <div class="mt-1 text-xs text-[#0066CC] font-medium animate-pulse">
+                Gire e ganhe prêmios exclusivos!
+            </div>
+        </a>
+        
+        <a href="javascript:void(0);" onclick="abrirSuporte()" class="action-button">
+            <i class="fas fa-life-ring"></i>
+            <div class="mt-2 font-semibold">Suporte</div>
+        </a>
+    </div>
+
+    <!-- Investment Plans -->
+    <div class="pt-6 px-4">
+        <div class="container mx-auto">
+            <!-- Plan Type Selection -->
+            <div class="flex justify-center gap-4 mb-8">
+                <a href="?type=advanced" 
+                   class="bg-gradient-to-r from-[#004B93] to-[#0066CC] 
+                          text-white px-8 py-4 rounded-md font-semibold transition-all duration-300 
+                          hover:shadow-lg hover:-translate-y-1 border border-[#0066CC]/20">
+                    Renda Estável
+                </a>
+                <a href="?type=special" 
+                   class="bg-gray-800 
+                          text-white px-8 py-4 rounded-md font-semibold transition-all duration-300 
+                          hover:shadow-lg hover:-translate-y-1 border border-[#0066CC]/20">
+                    Renda VIP
+                </a>
+            </div>
+
+            <!-- Plan Title -->
+            <h2 class="text-3xl font-bold mb-8 text-center">
+                <span class="bg-gradient-to-r from-[#004B93] to-[#0066CC] bg-clip-text text-transparent">
+                    Planos Estável
+                </span>
+            </h2>
+
+            <!-- Plans Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+                <!-- Plano 1 -->
+                <div class="bg-gradient-to-br from-gray-900/80 to-gray-800/80 rounded-2xl overflow-hidden 
+                                  border border-[#004B93]/20 backdrop-blur-sm transition-all duration-300 
+                                  hover:-translate-y-2 hover:shadow-lg hover:shadow-[#004B93]/20 
+                                  group relative">
+                    <div class="absolute inset-0 bg-gradient-to-r from-[#004B93]/10 to-[#0066CC]/10 
+                                      opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    <img src="https://mkol-pspsi.site/assets/images/produtos/1.webp" 
+                         class="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-110" 
+                         alt="Pepsi (A)">
+                    
+                    <div class="p-6">
+                        <h3 class="text-2xl font-bold text-center mb-6">
+                            <p class="bg-gradient-to-r from-[#004B93] to-[#0066CC] bg-clip-text text-transparent 
+                                     text-sm mb-2">[Renda diária, retiradas diárias]</p>
+                            Pepsi (A)                                </h3>
+                        
+                        <div class="grid grid-cols-2 gap-4 mb-6">
+                            <div class="text-center">
+                                <p class="text-gray-400 text-sm">Investimento:</p>
+                                <p class="text-xl font-bold text-white">
+                                    KZ 6.000                                        </p>
+                            </div>
+                            <div class="text-center">
+                                <p class="text-gray-400 text-sm">Renda Diária:</p>
+                                <p class="text-xl font-bold text-[#0066CC]">
+                                    KZ 420                                        </p>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4 mb-6">
+                            <div class="text-center">
+                                <p class="text-gray-400 text-sm">Renda Total:</p>
+                                <p class="text-xl font-bold text-white">
+                                    KZ 50.400                                        </p>
+                            </div>
+                            <div class="text-center">
+                                <p class="text-gray-400 text-sm">Duração:</p>
+                                <p class="text-xl font-bold text-white">
+                                    120 dias
+                                </p>
+                            </div>
+                        </div>
+
+                        <form action="vip1.html" method="POST">
+                            <input type="hidden" name="product_id" value="11">
+                            <button type="submit" 
+                                    class="w-full py-4 px-6 rounded-xl font-semibold text-white relative
+                                           overflow-hidden group/btn">
+                                <div class="absolute inset-0 bg-gradient-to-r from-[#004B93] to-[#0066CC] transition-transform duration-300"></div>
+                                <div class="absolute inset-0 bg-gradient-to-r from-[#003B73] to-[#004B93] opacity-0 
+                                            group-hover/btn:opacity-100 transition-opacity duration-300"></div>
+                                <div class="relative flex items-center justify-center gap-2">
+                                <i class="fas fa-shopping-cart"></i>
+                                Investir Agora
+                                </div>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Plano 2 -->
+                <div class="bg-gradient-to-br from-gray-900/80 to-gray-800/80 rounded-2xl overflow-hidden 
+                                  border border-[#004B93]/20 backdrop-blur-sm transition-all duration-300 
+                                  hover:-translate-y-2 hover:shadow-lg hover:shadow-[#004B93]/20 
+                                  group relative">
+                    <div class="absolute inset-0 bg-gradient-to-r from-[#004B93]/10 to-[#0066CC]/10 
+                                      opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    <img src="https://mkol-pspsi.site/assets/images/produtos/2.jpeg" 
+                         class="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-110" 
+                         alt="Pepsi (B)">
+                    
+                    <div class="p-6">
+                        <h3 class="text-2xl font-bold text-center mb-6">
+                            <p class="bg-gradient-to-r from-[#004B93] to-[#0066CC] bg-clip-text text-transparent 
+                                     text-sm mb-2">[Renda diária, retiradas diárias]</p>
+                            Pepsi (B)                                </h3>
+                        
+                        <div class="grid grid-cols-2 gap-4 mb-6">
+                            <div class="text-center">
+                                <p class="text-gray-400 text-sm">Investimento:</p>
+                                <p class="text-xl font-bold text-white">
+                                    KZ 15.000                                        </p>
+                            </div>
+                            <div class="text-center">
+                                <p class="text-gray-400 text-sm">Renda Diária:</p>
+                                <p class="text-xl font-bold text-[#0066CC]">
+                                    KZ 1.050                                        </p>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4 mb-6">
+                            <div class="text-center">
+                                <p class="text-gray-400 text-sm">Renda Total:</p>
+                                <p class="text-xl font-bold text-white">
+                                    KZ 126.000                                        </p>
+                            </div>
+                            <div class="text-center">
+                                <p class="text-gray-400 text-sm">Duração:</p>
+                                <p class="text-xl font-bold text-white">
+                                    120 dias
+                                </p>
+                            </div>
+                        </div>
+
+                        <form action="vip2.html" method="POST">
+                            <input type="hidden" name="product_id" value="12">
+                            <button type="submit" 
+                                    class="w-full py-4 px-6 rounded-xl font-semibold text-white relative
+                                           overflow-hidden group/btn">
+                                <div class="absolute inset-0 bg-gradient-to-r from-[#004B93] to-[#0066CC] transition-transform duration-300"></div>
+                                <div class="absolute inset-0 bg-gradient-to-r from-[#003B73] to-[#004B93] opacity-0 
+                                            group-hover/btn:opacity-100 transition-opacity duration-300"></div>
+                                <div class="relative flex items-center justify-center gap-2">
+                                <i class="fas fa-shopping-cart"></i>
+                                Investir Agora
+                                </div>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Plano 3 -->
+                <div class="bg-gradient-to-br from-gray-900/80 to-gray-800/80 rounded-2xl overflow-hidden 
+                                  border border-[#004B93]/20 backdrop-blur-sm transition-all duration-300 
+                                  hover:-translate-y-2 hover:shadow-lg hover:shadow-[#004B93]/20 
+                                  group relative">
+                    <div class="absolute inset-0 bg-gradient-to-r from-[#004B93]/10 to-[#0066CC]/10 
+                                      opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    <img src="https://mkol-pspsi.site/assets/images/produtos/3.webp" 
+                         class="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-110" 
+                         alt="Pepsi (C)">
+                    
+                    <div class="p-6">
+                        <h3 class="text-2xl font-bold text-center mb-6">
+                            <p class="bg-gradient-to-r from-[#004B93] to-[#0066CC] bg-clip-text text-transparent 
+                                     text-sm mb-2">[Renda diária, retiradas diárias]</p>
+                            Pepsi (C)                                </h3>
+                        
+                        <div class="grid grid-cols-2 gap-4 mb-6">
+                            <div class="text-center">
+                                <p class="text-gray-400 text-sm">Investimento:</p>
+                                <p class="text-xl font-bold text-white">
+                                    KZ 50.000                                        </p>
+                            </div>
+                            <div class="text-center">
+                                <p class="text-gray-400 text-sm">Renda Diária:</p>
+                                <p class="text-xl font-bold text-[#0066CC]">
+                                    KZ 3.500                                        </p>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4 mb-6">
+                            <div class="text-center">
+                                <p class="text-gray-400 text-sm">Renda Total:</p>
+                                <p class="text-xl font-bold text-white">
+                                    KZ 420.000                                        </p>
+                            </div>
+                            <div class="text-center">
+                                <p class="text-gray-400 text-sm">Duração:</p>
+                                <p class="text-xl font-bold text-white">
+                                    120 dias
+                                </p>
+                            </div>
+                        </div>
+
+                        <form action="vip3.html" method="POST">
+                            <input type="hidden" name="product_id" value="13">
+                            <button type="submit" 
+                                    class="w-full py-4 px-6 rounded-xl font-semibold text-white relative
+                                           overflow-hidden group/btn">
+                                <div class="absolute inset-0 bg-gradient-to-r from-[#004B93] to-[#0066CC] transition-transform duration-300"></div>
+                                <div class="absolute inset-0 bg-gradient-to-r from-[#003B73] to-[#004B93] opacity-0 
+                                            group-hover/btn:opacity-100 transition-opacity duration-300"></div>
+                                <div class="relative flex items-center justify-center gap-2">
+                                <i class="fas fa-shopping-cart"></i>
+                                Investir Agora
+                                </div>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Plano 4 -->
+                <div class="bg-gradient-to-br from-gray-900/80 to-gray-800/80 rounded-2xl overflow-hidden 
+                                  border border-[#004B93]/20 backdrop-blur-sm transition-all duration-300 
+                                  hover:-translate-y-2 hover:shadow-lg hover:shadow-[#004B93]/20 
+                                  group relative">
+                    <div class="absolute inset-0 bg-gradient-to-r from-[#004B93]/10 to-[#0066CC]/10 
+                                      opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    <img src="https://mkol-pspsi.site/assets/images/produtos/4.webp" 
+                         class="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-110" 
+                         alt="Pepsi (D)">
+                    
+                    <div class="p-6">
+                        <h3 class="text-2xl font-bold text-center mb-6">
+                            <p class="bg-gradient-to-r from-[#004B93] to-[#0066CC] bg-clip-text text-transparent 
+                                     text-sm mb-2">[Renda diária, retiradas diárias]</p>
+                            Pepsi (D)                                </h3>
+                        
+                        <div class="grid grid-cols-2 gap-4 mb-6">
+                            <div class="text-center">
+                                <p class="text-gray-400 text-sm">Investimento:</p>
+                                <p class="text-xl font-bold text-white">
+                                    KZ 150.000                                        </p>
+                            </div>
+                            <div class="text-center">
+                                <p class="text-gray-400 text-sm">Renda Diária:</p>
+                                <p class="text-xl font-bold text-[#0066CC]">
+                                    KZ 10.500                                        </p>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4 mb-6">
+                            <div class="text-center">
+                                <p class="text-gray-400 text-sm">Renda Total:</p>
+                                <p class="text-xl font-bold text-white">
+                                    KZ 1.260.000                                        </p>
+                            </div>
+                            <div class="text-center">
+                                <p class="text-gray-400 text-sm">Duração:</p>
+                                <p class="text-xl font-bold text-white">
+                                    120 dias
+                                </p>
+                            </div>
+                        </div>
+
+                        <form action="vip4.html" method="POST">
+                            <input type="hidden" name="product_id" value="14">
+                            <button type="submit" 
+                                    class="w-full py-4 px-6 rounded-xl font-semibold text-white relative
+                                           overflow-hidden group/btn">
+                                <div class="absolute inset-0 bg-gradient-to-r from-[#004B93] to-[#0066CC] transition-transform duration-300"></div>
+                                <div class="absolute inset-0 bg-gradient-to-r from-[#003B73] to-[#004B93] opacity-0 
+                                            group-hover/btn:opacity-100 transition-opacity duration-300"></div>
+                                <div class="relative flex items-center justify-center gap-2">
+                                <i class="fas fa-shopping-cart"></i>
+                                Investir Agora
+                                </div>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Plano 5 -->
+                <div class="bg-gradient-to-br from-gray-900/80 to-gray-800/80 rounded-2xl overflow-hidden 
+                                  border border-[#004B93]/20 backdrop-blur-sm transition-all duration-300 
+                                  hover:-translate-y-2 hover:shadow-lg hover:shadow-[#004B93]/20 
+                                  group relative">
+                    <div class="absolute inset-0 bg-gradient-to-r from-[#004B93]/10 to-[#0066CC]/10 
+                                      opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    <img src="https://mkol-pspsi.site/assets/images/produtos/5.jpeg" 
+                         class="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-110" 
+                         alt="Pepsi (E)">
+                    
+                    <div class="p-6">
+                        <h3 class="text-2xl font-bold text-center mb-6">
+                            <p class="bg-gradient-to-r from-[#004B93] to-[#0066CC] bg-clip-text text-transparent 
+                                     text-sm mb-2">[Renda diária, retiradas diárias]</p>
+                            Pepsi (E)                                </h3>
+                        
+                        <div class="grid grid-cols-2 gap-4 mb-6">
+                            <div class="text-center">
+                                <p class="text-gray-400 text-sm">Investimento:</p>
+                                <p class="text-xl font-bold text-white">
+                                    KZ 500.000                                        </p>
+                            </div>
+                            <div class="text-center">
+                                <p class="text-gray-400 text-sm">Renda Diária:</p>
+                                <p class="text-xl font-bold text-[#0066CC]">
+                                    KZ 35.000                                        </p>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4 mb-6">
+                            <div class="text-center">
+                                <p class="text-gray-400 text-sm">Renda Total:</p>
+                                <p class="text-xl font-bold text-white">
+                                    KZ 4.200.000                                        </p>
+                            </div>
+                            <div class="text-center">
+                                <p class="text-gray-400 text-sm">Duração:</p>
+                                <p class="text-xl font-bold text-white">
+                                    120 dias
+                                </p>
+                            </div>
+                        </div>
+
+                        <form action="vip5.html" method="POST">
+                            <input type="hidden" name="product_id" value="15">
+                            <button type="submit" 
+                                    class="w-full py-4 px-6 rounded-xl font-semibold text-white relative
+                                           overflow-hidden group/btn">
+                                <div class="absolute inset-0 bg-gradient-to-r from-[#004B93] to-[#0066CC] transition-transform duration-300"></div>
+                                <div class="absolute inset-0 bg-gradient-to-r from-[#003B73] to-[#004B93] opacity-0 
+                                            group-hover/btn:opacity-100 transition-opacity duration-300"></div>
+                                <div class="relative flex items-center justify-center gap-2">
+                                <i class="fas fa-shopping-cart"></i>
+                                Investir Agora
+                                </div>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Plano 6 (Desativado) -->
+                <div class="bg-gradient-to-br from-gray-900/80 to-gray-800/80 rounded-2xl overflow-hidden 
+                                  border border-[#004B93]/20 backdrop-blur-sm transition-all duration-300 
+                                  hover:-translate-y-2 hover:shadow-lg hover:shadow-[#004B93]/20 
+                                  group relative">
+                    <div class="absolute inset-0 bg-gradient-to-r from-[#004B93]/10 to-[#0066CC]/10 
+                                      opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    <img src="https://mkol-pspsi.site/assets/images/produtos/6.webp" 
+                         class="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-110" 
+                         alt="Pepsi (F)">
+                    
+                    <div class="p-6">
+                        <h3 class="text-2xl font-bold text-center mb-6">
+                            <p class="bg-gradient-to-r from-[#004B93] to-[#0066CC] bg-clip-text text-transparent 
+                                     text-sm mb-2">[Renda diária, retiradas diárias]</p>
+                            Pepsi (F)                                </h3>
+                        
+                        <div class="grid grid-cols-2 gap-4 mb-6">
+                            <div class="text-center">
+                                <p class="text-gray-400 text-sm">Investimento:</p>
+                                <p class="text-xl font-bold text-white">
+                                    KZ 1.000.000                                        </p>
+                            </div>
+                            <div class="text-center">
+                                <p class="text-gray-400 text-sm">Renda Diária:</p>
+                                <p class="text-xl font-bold text-[#0066CC]">
+                                    KZ 70.000                                        </p>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4 mb-6">
+                            <div class="text-center">
+                                <p class="text-gray-400 text-sm">Renda Total:</p>
+                                <p class="text-xl font-bold text-white">
+                                    KZ 8.400.000                                        </p>
+                            </div>
+                            <div class="text-center">
+                                <p class="text-gray-400 text-sm">Duração:</p>
+                                <p class="text-xl font-bold text-white">
+                                    120 dias
+                                </p>
+                            </div>
+                        </div>
+
+                        <button disabled
+                                class="w-full py-4 px-6 rounded-xl font-semibold text-white/50
+                                       bg-gray-700/50 cursor-not-allowed backdrop-blur-sm
+                                       flex items-center justify-center gap-2 border border-gray-600/20">
+                            <i class="fas fa-clock"></i>
+                            A CAMINHO PARA A EMPRESA
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Support Modal -->
+    <div class="modal-overlay" id="suporteModal">
+        <div class="modal">
+            <div class="flex items-center justify-center mb-6">
+                <div class="w-16 h-16 bg-gradient-to-br from-[#004B93] to-[#0066CC] rounded-full flex items-center justify-center">
+                    <i class="fab fa-telegram text-2xl text-white"></i>
+                </div>
+            </div>
+            <h2 class="text-2xl font-bold text-white mb-6">Suporte Telegram</h2>
+            <div class="space-y-4">
+                <a href="https://t.me/pepesi_LSA" 
+                   target="_blank"
+                   class="block w-full bg-gradient-to-r from-[#004B93] to-[#0066CC] text-white 
+                          py-4 px-6 rounded-xl font-semibold transition-all duration-300 
+                          hover:-translate-y-1 flex items-center justify-center gap-3">
+                    <i class="fas fa-headset"></i>
+                    Suporte Individual
+                </a>
+                <a href="https://t.me/+xDof9tOQNGs4ZGUx" 
+                   target="_blank"
+                   class="block w-full bg-gradient-to-r from-[#229ED9] to-[#2AABEE] text-white 
+                          py-4 px-6 rounded-xl font-semibold transition-all duration-300 
+                          hover:-translate-y-1 flex items-center justify-center gap-3">
+                    <i class="fas fa-users"></i>
+                    Grupo Oficial
+                </a>
+                <button onclick="fecharSuporte()" 
+                        class="w-full bg-gray-700 hover:bg-gray-600 text-white py-4 px-6 rounded-xl 
+                               font-semibold transition-all duration-300 hover:-translate-y-1 
+                               flex items-center justify-center gap-2">
+                    <i class="fas fa-times"></i>
+                    Fechar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Withdrawal Modal -->
+    <div class="modal-overlay" id="saqueModal">
+        <div class="modal">
+            <div class="flex items-center justify-center mb-6">
+                <div class="w-16 h-16 bg-gradient-to-br from-[#004B93] to-[#0066CC] rounded-full flex items-center justify-center">
+                    <i class="fas fa-money-bill-wave text-2xl text-white"></i>
+                </div>
+            </div>
+            <h2 class="text-2xl font-bold text-white mb-6">Certifique</h2>
+            <div class="space-y-4">
+                <a href="retirar.html" 
+                   class="block w-full bg-gradient-to-r from-[#004B93] to-[#0066CC] text-white 
+                          py-4 px-6 rounded-xl font-semibold transition-all duration-300 
+                          hover:-translate-y-1 flex items-center justify-center gap-3">
+                    <i class="fas fa-chart-line"></i>
+                    Sacar Saldo Disponivel
+                    <span class="text-sm opacity-75">Tenho saldo suficiente</span>
+                </a>
+                <a href="pix.html" 
+                   class="block w-full bg-gradient-to-r from-green-600 to-green-500 text-white 
+                          py-4 px-6 rounded-xl font-semibold transition-all duration-300 
+                          hover:-translate-y-1 flex items-center justify-center gap-3">
+                    <i class="fas fa-users"></i>
+                    Já adicionou o seu iban?
+                    <span class="text-sm opacity-75">(Ainda não)</span>
+                </a>
+                <button onclick="fecharSaqueModal()" 
+                        class="w-full bg-gray-700 hover:bg-gray-600 text-white py-4 px-6 rounded-xl 
+                               font-semibold transition-all duration-300 hover:-translate-y-1 
+                               flex items-center justify-center gap-2">
+                    <i class="fas fa-times"></i>
+                    Cancelar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Modal -->
+    <div class="modal-overlay" id="notificacaoModal" style="display: flex;">
+        <div class="modal p-8">
+            <div class="flex items-center justify-center mb-6">
+                <div class="w-16 h-16 bg-gradient-to-br from-[#004B93] to-[#0066CC] rounded-full flex items-center justify-center">
+                    <i class="fas fa-bell text-2xl text-white"></i>
+                </div>
+            </div>
+            <h2 class="text-2xl font-bold text-white mb-6">Atenção</h2>
+            <div class="space-y-4 text-left mb-8">
+                <div class="flex items-start gap-3 text-white/90">
+                    <span class="text-[#0066CC] mt-1">•</span>
+                    <span>Cadastre-se como novo usuário e deposite KZ6000 para ganhar dinheiro</span>
+                </div>
+                <div class="flex items-start gap-3 text-white/90">
+                    <span class="text-[#0066CC] mt-1">•</span>
+                    <span> Valor mínimo de depósito: KZ6000 </span>
+                </div>
+                <div class="flex items-start gap-3 text-white/90">
+                    <span class="text-[#0066CC] mt-1">•</span>
+                    <span> Renda diária Retirada diária </span>
+                </div>
+                <div class="flex items-start gap-3 text-white/90">
+                    <span class="text-[#0066CC] mt-1">•</span>
+                    <span> Valor mínimo de retirada: KZ 1200</span>
+                </div>
+            </div>
+            <div class="flex gap-4">
+                <button onclick="fecharNotificacao()" 
+                        class="flex-1 bg-gray-700 hover:bg-gray-600 text-white py-4 px-6 rounded-xl 
+                               font-semibold transition-all duration-300 hover:-translate-y-1 
+                               flex items-center justify-center gap-2">
+                    <i class="fas fa-times"></i>
+                    Fechar
+                </button>
+                <a href="https://t.me/+xDof9tOQNGs4ZGUx" 
+                   target="_blank"
+                   class="flex-1 bg-gradient-to-r from-[#004B93] to-[#0066CC] text-white 
+                          py-4 px-6 rounded-xl font-semibold transition-all duration-300 
+                          hover:-translate-y-1 flex items-center justify-center gap-2">
+                    <i class="fab fa-telegram"></i>
+                    Telegram
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <div class="nav-container">
+            <a href="inicio.html" class="nav-item active">
+                <i class="fas fa-home-alt"></i>
+                <span>Início</span>
+            </a>
+            <a href="rede.html" class="nav-item">
+                <i class="fas fa-user-friends"></i>
+                <span>Convidar</span>
+            </a>
+            <a href="carteira.html" class="nav-item">
+                <i class="fas fa-chart-bar"></i>
+                <span>Carteira</span>
+            </a>
+            <a href="perfil.html" class="nav-item">
+                <i class="fas fa-user-circle"></i>
+                <span>Perfil</span>
+            </a>
+        </div>
+    </nav>
+
+    <script>
+        // Função para buscar e atualizar o saldo do usuário
+        async function atualizarSaldoUsuario() {
+            // Obtém os dados do usuário do localStorage
+            const userData = JSON.parse(localStorage.getItem("user_data"));
+            
+            if (!userData || !userData.id) {
+                console.error("Usuário não logado ou dados inválidos.");
+                window.location.href = 'index.html'; // Redireciona se não estiver logado
+                return;
+            }
+
+            try {
+                // Faz a requisição para a API (substitua pela sua URL real)
+                const resposta = await fetch(`https://api-wped.onrender.com/usuarios/${userData.id}`);
+                
+                if (!resposta.ok) {
+                    throw new Error('Erro ao buscar dados do usuário');
+                }
+
+                const dadosAtualizados = await resposta.json();
+
+                // Atualiza o localStorage com os novos dados (opcional)
+                localStorage.setItem("user_data", JSON.stringify(dadosAtualizados));
+
+                // Atualiza o saldo na página
+                document.getElementById('userBalance').innerText = `AOA ${dadosAtualizados.saldo.toFixed(2)}`;
+                
+                // Atualiza o saldo de comissões (se existir)
+                if (dadosAtualizados.comissoes) {
+                    document.getElementById('userCommissions').innerText = `AOA ${dadosAtualizados.comissoes.toFixed(2)}`;
+                }
+
+            } catch (erro) {
+                console.error("Erro ao carregar saldo:", erro);
+                // Pode exibir uma mensagem de erro na tela se preferir
+            }
+        }
+
+        function abrirSuporte() {
+            document.getElementById('suporteModal').style.display = 'flex';
+        }
+
+        function fecharSuporte() {
+            document.getElementById('suporteModal').style.display = 'none';
+        }
+
+        function fecharNotificacao() {
+            document.getElementById('notificacaoModal').style.display = 'none';
+        }
+        
+        function abrirSaqueModal() {
+            document.getElementById('saqueModal').style.display = 'flex';
+        }
+        
+        function fecharSaqueModal() {
+            document.getElementById('saqueModal').style.display = 'none';
+        }
+
+        // Fake activity data
+        const actions = ['Depositou', 'Sacou'];
+        const amounts = [6000, 12000, 20000, 6000, 50000, 23000, 12000, 6000, 100000];
+
+        function generateRandomNumber() {
+            const num = Math.floor(Math.random() * 9000) + 1000;
+            return num.toString().slice(0, -2) + '**';
+        }
+
+        function generateActivity() {
+            const number = generateRandomNumber();
+            const action = actions[Math.floor(Math.random() * actions.length)];
+            const amount = amounts[Math.floor(Math.random() * amounts.length)];
+            const color = action === 'Depositou' ? 'text-green-500' : 'text-blue-500';
+            
+            return `
+                <div class="flex items-center justify-between py-2 text-sm border-b border-gray-800 last:border-0">
+                    <span class="text-gray-400">${number}</span>
+                    <span class="${color}">
+                        ${action} KZ ${amount.toFixed(2)}
+                    </span>
+                </div>
+            `;
+        }
+
+        function updateActivityFeed() {
+            const feed = document.getElementById('activityFeed');
+            const activity = generateActivity();
+            
+            feed.insertAdjacentHTML('afterbegin', activity);
+            
+            // Keep only last 5 activities
+            while (feed.children.length > 5) {
+                feed.removeChild(feed.lastChild);
+            }
+        }
+
+        // Initial activities
+        for (let i = 0; i < 5; i++) {
+            updateActivityFeed();
+        }
+
+        // Update every 3-7 seconds randomly
+        setInterval(() => {
+            updateActivityFeed();
+        }, Math.random() * 4000 + 3000);
+
+        // Atualiza o saldo quando a página carrega
+        window.onload = function() {
+            atualizarSaldoUsuario();
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pepsi - Relatórios</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        :root {
+            --pepsi-blue: #004B93;
+            --pepsi-red: #EE1133;
+            --pepsi-light-blue: #0066CC;
+            --background: #000000;
+            --text: #ffffff;
+            --text-light: #a0a0a0;
+            --border: #333333;
+            --card-gradient: linear-gradient(145deg, #004B93, #0066CC);
+            --card-shine: linear-gradient(35deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0) 100%);
+        }
+
+        body {
+            background: var(--background);
+            color: var(--text);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            min-height: 100vh;
+            padding-bottom: 80px;
+        }
+
+        .reports-card {
+            background: var(--card-gradient);
+            position: relative;
+            border-radius: 20px;
+            padding: 30px;
+            color: white;
+            margin: 16px;
+            box-shadow: 0 10px 30px rgba(0, 75, 147, 0.3);
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .reports-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 200%;
+            height: 100%;
+            background: var(--card-shine);
+            transform: rotate(25deg);
+            animation: shine 8s infinite linear;
+        }
+        
+        @keyframes shine {
+            0% { transform: translateX(-100%) rotate(25deg); }
+            100% { transform: translateX(100%) rotate(25deg); }
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding: 16px;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .nav-tabs::-webkit-scrollbar {
+            display: none;
+        }
+
+        .nav-tab {
+            background: linear-gradient(145deg, #111111, #1a1a1a);
+            border: 1px solid rgba(0, 75, 147, 0.2);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-tab:hover,
+        .nav-tab.active {
+            background: var(--card-gradient);
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 75, 147, 0.4);
+        }
+
+        .transaction-card {
+            background: linear-gradient(145deg, #111111, #1a1a1a);
+            border: 1px solid rgba(0, 75, 147, 0.2);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .transaction-card:hover {
+            transform: translateX(4px);
+            border-color: rgba(0, 75, 147, 0.4);
+            box-shadow: 0 8px 24px rgba(0, 75, 147, 0.4);
+        }
+
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 99px;
+            font-size: 12px;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .status-badge.success {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10B981;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .status-badge.warning {
+            background: rgba(245, 158, 11, 0.1);
+            color: #F59E0B;
+            border: 1px solid rgba(245, 158, 11, 0.2);
+        }
+
+        .status-badge.danger {
+            background: rgba(239, 68, 68, 0.1);
+            color: #EF4444;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(17, 17, 17, 0.95);
+            border-top: 1px solid rgba(0, 75, 147, 0.2);
+            padding: 12px;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .nav-container {
+            max-width: 500px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-around;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 12px;
+            gap: 4px;
+            padding: 8px 16px;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-item:hover {
+            color: white;
+            background: rgba(0, 75, 147, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .nav-item i {
+            font-size: 22px;
+            background: linear-gradient(45deg, var(--pepsi-blue), var(--pepsi-light-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 2px 4px rgba(0, 75, 147, 0.2));
+        }
+
+        .nav-item.active {
+            color: white;
+            background: rgba(0, 75, 147, 0.15);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 48px 24px;
+            background: linear-gradient(145deg, #111111, #1a1a1a);
+            border: 1px solid rgba(0, 75, 147, 0.2);
+            border-radius: 16px;
+            margin: 16px;
+        }
+
+        .empty-state i {
+            font-size: 48px;
+            color: var(--pepsi-light-blue);
+            margin-bottom: 16px;
+        }
+
+        .loading-spinner {
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            border-top: 3px solid var(--pepsi-light-blue);
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container mx-auto">
+        <!-- Reports Overview -->
+        <div class="reports-card">
+            <div class="flex justify-between items-center mb-6">
+                <div>
+                    <h2 class="text-2xl font-bold">Relatório Financeiro</h2>
+                    <p class="text-white/70">Acompanhe suas movimentações</p>
+                </div>
+                <div class="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center">
+                    <i class="fas fa-file-alt text-2xl"></i>
+                </div>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <p class="text-white/70">Total Depositado</p>
+                    <p class="text-2xl font-bold" id="total-depositos">AOA 0,00</p>
+                </div>
+                <div>
+                    <p class="text-white/70">Total Sacado</p>
+                    <p class="text-2xl font-bold" id="total-saques">AOA 0,00</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Transaction Tabs -->
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="showTab('deposits')">
+                <i class="fas fa-wallet"></i>
+                Depósitos
+            </button>
+            <button class="nav-tab" onclick="showTab('withdrawals')">
+                <i class="fas fa-money-bill-wave"></i>
+                Saques
+            </button>
+            <button class="nav-tab" onclick="showTab('investments')">
+                <i class="fas fa-chart-line"></i>
+                Investimentos
+            </button>
+        </div>
+
+        <!-- Deposits Tab -->
+        <div id="deposits" class="tab-content active px-4">
+            <div id="deposits-loading" class="loading-spinner"></div>
+            <div id="deposits-content" style="display: none;">
+                <!-- Depósitos serão carregados aqui -->
+            </div>
+            <div id="deposits-empty" class="empty-state" style="display: none;">
+                <i class="fas fa-inbox"></i>
+                <h3 class="text-xl font-bold mb-2">Nenhum Depósito</h3>
+                <p class="text-white/60">Você ainda não realizou nenhum depósito</p>
+            </div>
+        </div>
+
+        <!-- Withdrawals Tab -->
+        <div id="withdrawals" class="tab-content px-4">
+            <div id="withdrawals-loading" class="loading-spinner"></div>
+            <div id="withdrawals-content" style="display: none;">
+                <!-- Saques serão carregados aqui -->
+            </div>
+            <div id="withdrawals-empty" class="empty-state" style="display: none;">
+                <i class="fas fa-inbox"></i>
+                <h3 class="text-xl font-bold mb-2">Nenhum Saque</h3>
+                <p class="text-white/60">Você ainda não realizou nenhum saque</p>
+            </div>
+        </div>
+
+        <!-- Investments Tab -->
+        <div id="investments" class="tab-content px-4">
+            <div id="investments-loading" class="loading-spinner"></div>
+            <div id="investments-content" style="display: none;">
+                <!-- Investimentos serão carregados aqui -->
+            </div>
+            <div id="investments-empty" class="empty-state" style="display: none;">
+                <i class="fas fa-inbox"></i>
+                <h3 class="text-xl font-bold mb-2">Nenhum Investimento</h3>
+                <p class="text-white/60">Você ainda não fez nenhum investimento</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <div class="nav-container">
+            <a href="inicio.html" class="nav-item">
+                <i class="fas fa-home-alt"></i>
+                <span>Início</span>
+            </a>
+            <a href="equipe" class="nav-item">
+                <i class="fas fa-user-friends"></i>
+                <span>Rede</span>
+            </a>
+            <a href="carteira.html" class="nav-item">
+                <i class="fas fa-boxes"></i>
+                <span>Carteira</span>
+            </a>
+            <a href="perfil.html" class="nav-item active">
+                <i class="fas fa-user-circle"></i>
+                <span>Perfil</span>
+            </a>
+        </div>
+    </nav>
+
+    <script>
+        // Tab switching
+        function showTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.getElementById(tabId).classList.add('active');
+            event.currentTarget.classList.add('active');
+            
+            // Carrega os dados da aba quando ela é selecionada
+            if (tabId === 'deposits' && !window.depositsLoaded) {
+                loadDeposits();
+            } else if (tabId === 'withdrawals' && !window.withdrawalsLoaded) {
+                loadWithdrawals();
+            } else if (tabId === 'investments' && !window.investmentsLoaded) {
+                loadInvestments();
+            }
+        }
+
+        // Formata data para exibição
+        function formatDate(dateString) {
+            const options = { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' };
+            return new Date(dateString).toLocaleDateString('pt-BR', options);
+        }
+
+        // Formata valor monetário
+        function formatCurrency(value) {
+            return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'AOA' }).format(value);
+        }
+
+        // Carrega depósitos
+        async function loadDeposits() {
+            const userData = JSON.parse(localStorage.getItem('user_data'));
+            if (!userData) return;
+
+            try {
+                const response = await fetch('https://api-wped.onrender.com/vip');
+                const allDeposits = await response.json();
+                
+                // Filtra apenas os depósitos do usuário logado (simulação - ajuste conforme sua API)
+                const userDeposits = allDeposits.filter(deposit => deposit.usuarioId === userData.id);
+                
+                // Calcula total depositado
+                const totalDeposits = userDeposits.reduce((sum, deposit) => sum + (deposit.valor || 0), 0);
+                document.getElementById('total-depositos').textContent = formatCurrency(totalDeposits);
+                
+                // Exibe depósitos
+                const depositsContent = document.getElementById('deposits-content');
+                if (userDeposits.length > 0) {
+                    depositsContent.innerHTML = userDeposits.map(deposit => `
+                        <div class="transaction-card">
+                            <div class="flex justify-between items-start mb-2">
+                                <div>
+                                    <h3 class="font-bold">Depósito #${deposit.id.substring(0, 4)}</h3>
+                                    <p class="text-sm text-white/60">${formatDate(deposit.data)}</p>
+                                </div>
+                                <span class="text-xl font-bold text-green-500">+${formatCurrency(deposit.valor)}</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-white/70">Método: ${deposit.metodo || 'Transferência'}</span>
+                                <span class="status-badge success">
+                                    <i class="fas fa-check-circle"></i>
+                                    Confirmado
+                                </span>
+                            </div>
+                        </div>
+                    `).join('');
+                    
+                    document.getElementById('deposits-loading').style.display = 'none';
+                    document.getElementById('deposits-content').style.display = 'block';
+                    document.getElementById('deposits-empty').style.display = 'none';
+                } else {
+                    document.getElementById('deposits-loading').style.display = 'none';
+                    document.getElementById('deposits-empty').style.display = 'block';
+                }
+                
+                window.depositsLoaded = true;
+            } catch (error) {
+                console.error('Erro ao carregar depósitos:', error);
+                document.getElementById('deposits-loading').style.display = 'none';
+                document.getElementById('deposits-empty').style.display = 'block';
+            }
+        }
+
+        // Carrega saques
+        async function loadWithdrawals() {
+            const userData = JSON.parse(localStorage.getItem('user_data'));
+            if (!userData) return;
+
+            try {
+                const response = await fetch('https://api-wped.onrender.com/retiradas');
+                const allWithdrawals = await response.json();
+                
+                // Filtra apenas os saques do usuário logado
+                const userWithdrawals = allWithdrawals.filter(withdrawal => withdrawal.usuarioId === userData.id);
+                
+                // Calcula total sacado
+                const totalWithdrawals = userWithdrawals.reduce((sum, withdrawal) => sum + (withdrawal.valor || 0), 0);
+                document.getElementById('total-saques').textContent = formatCurrency(totalWithdrawals);
+                
+                // Exibe saques
+                const withdrawalsContent = document.getElementById('withdrawals-content');
+                if (userWithdrawals.length > 0) {
+                    withdrawalsContent.innerHTML = userWithdrawals.map(withdrawal => `
+                        <div class="transaction-card">
+                            <div class="flex justify-between items-start mb-2">
+                                <div>
+                                    <h3 class="font-bold">Saque #${withdrawal.id.substring(0, 4)}</h3>
+                                    <p class="text-sm text-white/60">${formatDate(withdrawal.data)}</p>
+                                </div>
+                                <span class="text-xl font-bold text-red-500">-${formatCurrency(withdrawal.valor)}</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <p class="text-sm">Para: ${withdrawal.nome}</p>
+                                    <p class="text-sm text-white/70">IBAN: ${withdrawal.iban.substring(0, 4)}...${withdrawal.iban.substring(withdrawal.iban.length - 4)}</p>
+                                </div>
+                                <span class="status-badge ${withdrawal.status ? 'success' : 'warning'}">
+                                    <i class="fas ${withdrawal.status ? 'fa-check-circle' : 'fa-clock'}"></i>
+                                    ${withdrawal.status ? 'Concluído' : 'Pendente'}
+                                </span>
+                            </div>
+                        </div>
+                    `).join('');
+                    
+                    document.getElementById('withdrawals-loading').style.display = 'none';
+                    document.getElementById('withdrawals-content').style.display = 'block';
+                    document.getElementById('withdrawals-empty').style.display = 'none';
+                } else {
+                    document.getElementById('withdrawals-loading').style.display = 'none';
+                    document.getElementById('withdrawals-empty').style.display = 'block';
+                }
+                
+                window.withdrawalsLoaded = true;
+            } catch (error) {
+                console.error('Erro ao carregar saques:', error);
+                document.getElementById('withdrawals-loading').style.display = 'none';
+                document.getElementById('withdrawals-empty').style.display = 'block';
+            }
+        }
+
+        // Carrega investimentos
+        async function loadInvestments() {
+            const userData = JSON.parse(localStorage.getItem('user_data'));
+            if (!userData) return;
+
+            try {
+                const response = await fetch('https://api-wped.onrender.com/depositos');
+                const allInvestments = await response.json();
+                
+                // Filtra apenas os investimentos do usuário logado
+                const userInvestments = allInvestments.filter(investment => investment.userId === userData.id);
+                
+                // Exibe investimentos
+                const investmentsContent = document.getElementById('investments-content');
+                if (userInvestments.length > 0) {
+                    investmentsContent.innerHTML = userInvestments.map(investment => `
+                        <div class="transaction-card">
+                            <div class="flex justify-between items-start mb-2">
+                                <div>
+                                    <h3 class="font-bold">${investment.produto.toUpperCase()}</h3>
+                                    <p class="text-sm text-white/60">${formatDate(investment.dataCompra)}</p>
+                                </div>
+                                <span class="text-xl font-bold">${formatCurrency(investment.preco)}</span>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4 mt-4">
+                                <div>
+                                    <p class="text-sm text-white/60">Renda Diária</p>
+                                    <p class="font-bold text-green-500">${formatCurrency(investment.renda_diaria)}</p>
+                                </div>
+                                <div>
+                                    <p class="text-sm text-white/60">Renda Total</p>
+                                    <p class="font-bold">${formatCurrency(investment.renda_total)}</p>
+                                </div>
+                                <div>
+                                    <p class="text-sm text-white/60">Prazo</p>
+                                    <p class="font-bold">${investment.prazo} dias</p>
+                                </div>
+                                <div>
+                                    <p class="text-sm text-white/60">Status</p>
+                                    <span class="status-badge success">
+                                        <i class="fas fa-check-circle"></i>
+                                        Ativo
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('');
+                    
+                    document.getElementById('investments-loading').style.display = 'none';
+                    document.getElementById('investments-content').style.display = 'block';
+                    document.getElementById('investments-empty').style.display = 'none';
+                } else {
+                    document.getElementById('investments-loading').style.display = 'none';
+                    document.getElementById('investments-empty').style.display = 'block';
+                }
+                
+                window.investmentsLoaded = true;
+            } catch (error) {
+                console.error('Erro ao carregar investimentos:', error);
+                document.getElementById('investments-loading').style.display = 'none';
+                document.getElementById('investments-empty').style.display = 'block';
+            }
+        }
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', () => {
+            // Verifica se o usuário está logado
+            const userData = JSON.parse(localStorage.getItem('user_data'));
+            if (!userData) {
+                window.location.href = 'index.html';
+                return;
+            }
+
+            // Marca item ativo no menu
+            const currentPath = window.location.pathname;
+            document.querySelectorAll('.nav-item').forEach(item => {
+                if (currentPath.includes(item.getAttribute('href'))) {
+                    item.classList.add('active');
+                }
+            });
+
+            // Carrega os dados iniciais (depósitos)
+            loadDeposits();
+        });
+    </script>
+</body>
+</html>

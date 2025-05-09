@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pepsi - Perfil</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        :root {
+            --pepsi-blue: #004B93;
+            --pepsi-red: #EE1133;
+            --pepsi-light-blue: #0066CC;
+            --background: #000000;
+            --text: #ffffff;
+            --text-light: #a0a0a0;
+            --border: #333333;
+            --card-gradient: linear-gradient(145deg, #004B93, #0066CC);
+            --card-shine: linear-gradient(35deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0) 100%);
+        }
+
+        body {
+            background: var(--background);
+            color: var(--text);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            min-height: 100vh;
+            padding-bottom: 80px;
+        }
+
+        .profile-card {
+            background: var(--card-gradient);
+            position: relative;
+            border-radius: 20px;
+            padding: 30px;
+            color: white;
+            margin: 16px;
+            box-shadow: 0 10px 30px rgba(0, 75, 147, 0.3);
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .profile-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 200%;
+            height: 100%;
+            background: var(--card-shine);
+            transform: rotate(25deg);
+            animation: shine 8s infinite linear;
+        }
+        
+        @keyframes shine {
+            0% { transform: translateX(-100%) rotate(25deg); }
+            100% { transform: translateX(100%) rotate(25deg); }
+        }
+
+        .action-card {
+            background: linear-gradient(145deg, #111111, #1a1a1a);
+            border: 1px solid rgba(0, 75, 147, 0.2);
+            border-radius: 16px;
+            padding: 20px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .action-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(0, 75, 147, 0.4);
+            box-shadow: 0 8px 30px rgba(0, 75, 147, 0.4);
+        }
+
+        .action-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(0, 75, 147, 0.1),
+                transparent
+            );
+            transition: 0.5s;
+        }
+
+        .action-card:hover::before {
+            left: 100%;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            padding: 16px;
+        }
+
+        .stat-card {
+            background: linear-gradient(145deg, #111111, #1a1a1a);
+            border: 1px solid rgba(0, 75, 147, 0.2);
+            border-radius: 16px;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(0, 75, 147, 0.4);
+            box-shadow: 0 8px 30px rgba(0, 75, 147, 0.4);
+        }
+
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(17, 17, 17, 0.95);
+            border-top: 1px solid rgba(0, 75, 147, 0.2);
+            padding: 12px;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .nav-container {
+            max-width: 500px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-around;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 12px;
+            gap: 4px;
+            padding: 8px 16px;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-item:hover {
+            color: white;
+            background: rgba(0, 75, 147, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .nav-item i {
+            font-size: 22px;
+            background: linear-gradient(45deg, var(--pepsi-blue), var(--pepsi-light-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 2px 4px rgba(0, 75, 147, 0.2));
+        }
+
+        .nav-item.active {
+            color: white;
+            background: rgba(0, 75, 147, 0.15);
+        }
+    </style>
+</head>
+<body>
+    <div class="container mx-auto px-4 py-8">
+        <!-- Profile Header -->
+        <div class="profile-card">
+            <div class="flex items-center justify-between mb-6">
+                <div>
+                    <h2 class="text-2xl font-bold">Meu Perfil</h2>
+                    <p class="text-white/70">Gerencie sua conta</p>
+                </div>
+                <div class="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center relative">
+                    <i class="fas fa-user-circle text-3xl"></i>
+                </div>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <p class="text-white/70">Nome</p>
+                    <p class="text-xl font-bold" id="userName"></p>
+                </div>
+                <div>
+                    <p class="text-white/70">ID</p>
+                    <p class="text-xl font-bold" id="userId"></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+            <a href="historico.html" class="action-card flex items-center gap-4">
+                <div class="w-12 h-12 bg-[#004B93]/20 rounded-full flex items-center justify-center">
+                    <i class="fas fa-history text-[#0066CC]"></i>
+                </div>
+                <div>
+                    <h3 class="font-semibold">Histórico Geral</h3>
+                    <p class="text-white/60 text-sm">Visualize seus relatórios</p>
+                </div>
+            </a>
+
+            <a href="pix.html" class="action-card flex items-center gap-4">
+                <div class="w-12 h-12 bg-[#004B93]/20 rounded-full flex items-center justify-center">
+                    <i class="fas fa-wallet text-[#0066CC]"></i>
+                </div>
+                <div>
+                    <h3 class="font-semibold">Dados Bancários</h3>
+                    <p class="text-white/60 text-sm">Gerencie suas informações de pagamento</p>
+                </div>
+            </a>
+
+            <a href="index.html" class="action-card flex items-center gap-4">
+                <div class="w-12 h-12 bg-red-500/20 rounded-full flex items-center justify-center">
+                    <i class="fas fa-sign-out-alt text-red-500"></i>
+                </div>
+                <div>
+                    <h3 class="font-semibold">Sair</h3>
+                    <p class="text-white/60 text-sm">Encerrar sessão</p>
+                </div>
+            </a>
+        </div>
+
+        <!-- Statistics -->
+        <div class="mt-8">
+            <h3 class="text-xl font-bold mb-6 px-4">Estatísticas</h3>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="flex items-center justify-between mb-4">
+                        <h4 class="text-white/60">Saldo Disponível</h4>
+                        <i class="fas fa-wallet text-[#0066CC]"></i>
+                    </div>
+                    <p class="text-2xl font-bold" id="userBalance">AOA 0,00</p>
+                </div>
+
+                <div class="stat-card">
+                    <div class="flex items-center justify-between mb-4">
+                        <h4 class="text-white/60">Total Investido</h4>
+                        <i class="fas fa-chart-line text-[#0066CC]"></i>
+                    </div>
+                    <p class="text-2xl font-bold" id="totalInvested">AOA 0,00</p>
+                </div>
+
+                <div class="stat-card">
+                    <div class="flex items-center justify-between mb-4">
+                        <h4 class="text-white/60">Total Sacado</h4>
+                        <i class="fas fa-money-bill-wave text-[#0066CC]"></i>
+                    </div>
+                    <p class="text-2xl font-bold" id="totalWithdrawn">AOA 0,00</p>
+                </div>
+
+                <div class="stat-card">
+                    <div class="flex items-center justify-between mb-4">
+                        <h4 class="text-white/60">Investimentos Ativos</h4>
+                        <i class="fas fa-briefcase text-[#0066CC]"></i>
+                    </div>
+                    <p class="text-2xl font-bold" id="activeInvestments">0</p>
+                </div>
+
+                <div class="stat-card">
+                    <div class="flex items-center justify-between mb-4">
+                        <h4 class="text-white/60">Total de Afiliados</h4>
+                        <i class="fas fa-users text-[#0066CC]"></i>
+                    </div>
+                    <p class="text-2xl font-bold" id="totalAffiliates">0</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <div class="nav-container">
+            <a href="inicio.html" class="nav-item">
+                <i class="fas fa-home-alt"></i>
+                <span>Início</span>
+            </a>
+            <a href="rede.html" class="nav-item">
+                <i class="fas fa-user-friends"></i>
+                <span>Rede</span>
+            </a>
+        
+            <a href="carteira.html" class="nav-item">
+                <i class="fas fa-wallet"></i>
+                <span>Carteira</span>
+            </a>
+            <a href="perfil.html" class="nav-item active">
+                <i class="fas fa-user-circle"></i>
+                <span>Perfil</span>
+            </a>
+        </div>
+    </nav>
+
+    <script>
+        // Função para carregar os dados do usuário
+        function carregarDadosUsuario() {
+            // Obtém os dados do usuário do localStorage
+            const userData = JSON.parse(localStorage.getItem("user_data"));
+            
+            if (!userData) {
+                console.error("Dados do usuário não encontrados no localStorage");
+                window.location.href = 'index.html'; // Redireciona para login se não houver dados
+                return;
+            }
+
+            // Atualiza os campos do perfil
+            if (userData.nome) {
+                document.getElementById('userName').textContent = userData.nome;
+            }
+            
+            // Exibe o telefone no campo ID
+            if (userData.telefone) {
+                document.getElementById('userId').textContent = userData.telefone;
+            } else if (userData.id) {
+                document.getElementById('userId').textContent = userData.id;
+            }
+
+            // Atualiza os dados financeiros (se existirem)
+            if (userData.saldo) {
+                document.getElementById('userBalance').textContent = `AOA ${userData.saldo.toFixed(2)}`;
+            }
+            if (userData.totalInvestido) {
+                document.getElementById('totalInvested').textContent = `AOA ${userData.totalInvestido.toFixed(2)}`;
+            }
+            if (userData.totalSacado) {
+                document.getElementById('totalWithdrawn').textContent = `AOA ${userData.totalSacado.toFixed(2)}`;
+            }
+            if (userData.investimentosAtivos) {
+                document.getElementById('activeInvestments').textContent = userData.investimentosAtivos;
+            }
+            if (userData.totalAfiliados) {
+                document.getElementById('totalAffiliates').textContent = userData.totalAfiliados;
+            }
+        }
+
+        // Função para buscar dados atualizados da API
+        async function buscarDadosAtualizados() {
+            const userData = JSON.parse(localStorage.getItem("user_data"));
+            
+            if (!userData || !userData.id) {
+                console.error("ID do usuário não encontrado");
+                return;
+            }
+
+            try {
+                // Substitua pela URL da sua API
+                const resposta = await fetch(`https://api-wped.onrender.com/usuarios/${userData.id}`);
+                
+                if (!resposta.ok) {
+                    throw new Error('Erro ao buscar dados do usuário');
+                }
+
+                const dadosAtualizados = await resposta.json();
+                
+                // Atualiza o localStorage com os novos dados
+                localStorage.setItem("user_data", JSON.stringify(dadosAtualizados));
+                
+                // Atualiza a interface
+                carregarDadosUsuario();
+
+            } catch (erro) {
+                console.error("Erro ao buscar dados atualizados:", erro);
+                // Pode exibir uma mensagem de erro para o usuário
+            }
+        }
+
+        // Mark active nav item
+        document.addEventListener('DOMContentLoaded', () => {
+            const currentPath = window.location.pathname;
+            document.querySelectorAll('.nav-item').forEach(item => {
+                if (currentPath.includes(item.getAttribute('href'))) {
+                    item.classList.add('active');
+                }
+            });
+
+            // Carrega os dados do usuário quando a página é carregada
+            carregarDadosUsuario();
+            
+            // Opcional: Busca dados atualizados da API
+            // buscarDadosAtualizados();
+        });
+    </script>
+</body>
+</html>

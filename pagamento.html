@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="pt-AO">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pepsi - Selecionar Banco</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --pepsi-blue: #004B93;
+            --pepsi-red: #EE1133;
+            --pepsi-light-blue: #0066CC;
+            --background: #000000;
+            --text: #ffffff;
+            --text-light: #a0a0a0;
+            --border: #333333;
+            --card-gradient: linear-gradient(145deg, #004B93, #0066CC);
+            --card-shine: linear-gradient(35deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0) 100%);
+        }
+
+        body {
+            background: var(--background);
+            color: var(--text);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            min-height: 100vh;
+            padding-bottom: 80px;
+        }
+
+        .bank-card {
+            background: linear-gradient(145deg, #111111, #1a1a1a);
+            border-radius: 20px;
+            padding: 30px;
+            color: white;
+            margin: 16px;
+            box-shadow: 0 10px 30px rgba(0, 75, 147, 0.3);
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+        }
+        
+        .bank-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 200%;
+            height: 100%;
+            background: var(--card-shine);
+            transform: rotate(25deg);
+            animation: shine 8s infinite linear;
+        }
+        
+        @keyframes shine {
+            0% { transform: translateX(-100%) rotate(25deg); }
+            100% { transform: translateX(100%) rotate(25deg); }
+        }
+
+        .bank-option {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .bank-option:hover {
+            transform: translateY(-3px);
+            border-color: var(--pepsi-light-blue);
+            background: rgba(0, 75, 147, 0.1);
+        }
+
+        .bank-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .bank-info {
+            flex: 1;
+        }
+
+        .bank-name {
+            font-weight: 600;
+            font-size: 18px;
+            margin-bottom: 4px;
+        }
+
+        .bank-details {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(17, 17, 17, 0.95);
+            border-top: 1px solid rgba(0, 75, 147, 0.2);
+            padding: 12px;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .nav-container {
+            max-width: 500px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-around;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 12px;
+            gap: 4px;
+            padding: 8px 16px;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-item:hover {
+            color: white;
+            background: rgba(0, 75, 147, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .nav-item i {
+            font-size: 22px;
+            background: linear-gradient(45deg, var(--pepsi-blue), var(--pepsi-light-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-item.active {
+            color: white;
+            background: rgba(0, 75, 147, 0.15);
+        }
+
+        .valor-display {
+            background: rgba(0, 75, 147, 0.2);
+            border-radius: 12px;
+            padding: 12px;
+            text-align: center;
+            margin-bottom: 24px;
+            font-size: 18px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mx-auto px-4 py-8">
+        <!-- Header Card -->
+        <div class="bank-card mb-8">
+            <div class="flex items-center justify-center mb-6">
+                <div class="w-20 h-20 bg-white/10 rounded-full flex items-center justify-center">
+                    <i class="fas fa-university text-4xl"></i>
+                </div>
+            </div>
+            <h1 class="text-2xl font-bold text-center mb-2">Selecione o Banco</h1>
+            <p class="text-center text-white/70">Escolha o banco para realizar o pagamento</p>
+            
+            <!-- Valor do Depósito -->
+            <div class="valor-display mt-6">
+                <p id="valorDeposito">AOA 0,00</p>
+            </div>
+        </div>
+
+        <!-- Lista de Bancos -->
+        <div class="mb-24">
+            <div class="bank-option" onclick="selectBank('bai')">
+                <div class="bank-icon" style="color: #e31937;">
+                    <i class="fas fa-landmark"></i>
+                </div>
+                <div class="bank-info">
+                    <div class="bank-name">Banco Angolano de Investimentos (BAI)</div>
+                    <div class="bank-details">Transferência para conta BAI</div>
+                </div>
+                <i class="fas fa-chevron-right text-blue-400"></i>
+            </div>
+
+            <div class="bank-option" onclick="selectBank('bfa')">
+                <div class="bank-icon" style="color: #00a859;">
+                    <i class="fas fa-university"></i>
+                </div>
+                <div class="bank-info">
+                    <div class="bank-name">Banco de Fomento Angola (BFA)</div>
+                    <div class="bank-details">Transferência para conta BFA</div>
+                </div>
+                <i class="fas fa-chevron-right text-blue-400"></i>
+            </div>
+
+            <div class="bank-option" onclick="selectBank('bic')">
+                <div class="bank-icon" style="color: #005baa;">
+                    <i class="fas fa-piggy-bank"></i>
+                </div>
+                <div class="bank-info">
+                    <div class="bank-name">Banco BIC</div>
+                    <div class="bank-details">Transferência para conta BIC</div>
+                </div>
+                <i class="fas fa-chevron-right text-blue-400"></i>
+            </div>
+
+            <div class="bank-option" onclick="selectBank('atlantico')">
+                <div class="bank-icon" style="color: #00a1e4;">
+                    <i class="fas fa-water"></i>
+                </div>
+                <div class="bank-info">
+                    <div class="bank-name">Banco Atlântico</div>
+                    <div class="bank-details">Transferência para conta Atlântico</div>
+                </div>
+                <i class="fas fa-chevron-right text-blue-400"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <div class="nav-container">
+            <a href="inicio.html" class="nav-item">
+                <i class="fas fa-home-alt"></i>
+                <span>Início</span>
+            </a>
+            <a href="rede.html" class="nav-item">
+                <i class="fas fa-user-friends"></i>
+                <span>Rede</span>
+            </a>
+            <a href="carteira.html" class="nav-item">
+                <i class="fas fa-chart-bar"></i>
+                <span>Carteira</span>
+            </a>
+            <a href="perfil.html" class="nav-item active">
+                <i class="fas fa-user-circle"></i>
+                <span>Perfil</span>
+            </a>
+        </div>
+    </nav>
+
+    <script>
+        // Recupera o valor do depósito do localStorage
+        document.addEventListener('DOMContentLoaded', function() {
+            const valor = localStorage.getItem('valorDeposito');
+            if (valor) {
+                document.getElementById('valorDeposito').textContent = 
+                    'AOA ' + parseFloat(valor).toLocaleString('pt-AO', {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    });
+            } else {
+                // Se não houver valor, redireciona de volta
+                window.location.href = 'depositar.html';
+            }
+
+            // Marca o item de navegação ativo
+            const currentPath = window.location.pathname;
+            document.querySelectorAll('.nav-item').forEach(item => {
+                if (currentPath.includes(item.getAttribute('href'))) {
+                    item.classList.add('active');
+                }
+            });
+        });
+
+        // Função para selecionar o banco e redirecionar
+        function selectBank(bank) {
+            // Armazena o banco selecionado no localStorage
+            localStorage.setItem('bancoSelecionado', bank);
+            
+            // Redireciona para a página específica do banco
+            window.location.href = bank + '.html';
+        }
+    </script>
+</body>
+</html>

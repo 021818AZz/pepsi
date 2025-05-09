@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="pt-AO">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pepsi - Dados Bancários</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        :root {
+            --pepsi-blue: #004B93;
+            --pepsi-red: #EE1133;
+            --pepsi-light-blue: #0066CC;
+            --background: #000000;
+            --text: #ffffff;
+            --text-light: #a0a0a0;
+            --border: #333333;
+            --card-gradient: linear-gradient(145deg, #004B93, #0066CC);
+            --card-shine: linear-gradient(35deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0) 100%);
+        }
+
+        body {
+            background: var(--background);
+            color: var(--text);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            min-height: 100vh;
+            padding-bottom: 80px;
+        }
+
+        .bank-card {
+            background: var(--card-gradient);
+            position: relative;
+            border-radius: 20px;
+            padding: 30px;
+            color: white;
+            margin: 16px;
+            box-shadow: 0 10px 30px rgba(0, 75, 147, 0.3);
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .bank-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 200%;
+            height: 100%;
+            background: var(--card-shine);
+            transform: rotate(25deg);
+            animation: shine 8s infinite linear;
+        }
+        
+        @keyframes shine {
+            0% { transform: translateX(-100%) rotate(25deg); }
+            100% { transform: translateX(100%) rotate(25deg); }
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-label {
+            display: block;
+            color: white;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .form-input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 12px 16px;
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: rgba(255, 255, 255, 0.4);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .form-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .form-select {
+            width: 100%;
+            background: rgba(213, 201, 201, 0.876);
+            border: 1px solid rgba(173, 162, 162, 0.2);
+            border-radius: 12px;
+            padding: 12px 16px;
+            color: rgb(13, 1, 1);
+            transition: all 0.3s ease;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23ffffff' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 1rem center;
+            background-repeat: no-repeat;
+            background-size: 1.5em 1.5em;
+            padding-right: 2.5rem;
+        }
+
+        .form-select:focus {
+            outline: none;
+            border-color: rgba(163, 102, 219, 0.925);
+            background-color: rgba(246, 242, 242, 0.15);
+        }
+
+        .submit-button {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 16px;
+            color: white;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .submit-button:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(17, 17, 17, 0.95);
+            border-top: 1px solid rgba(0, 75, 147, 0.2);
+            padding: 12px;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .nav-container {
+            max-width: 500px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-around;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 12px;
+            gap: 4px;
+            padding: 8px 16px;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-item:hover {
+            color: white;
+            background: rgba(0, 75, 147, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .nav-item i {
+            font-size: 22px;
+            background: linear-gradient(45deg, var(--pepsi-blue), var(--pepsi-light-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 2px 4px rgba(0, 75, 147, 0.2));
+        }
+
+        .nav-item.active {
+            color: white;
+            background: rgba(0, 75, 147, 0.15);
+        }
+        
+        .iban-prefix {
+            display: inline-block;
+            margin-right: 5px;
+            color: rgba(237, 240, 240, 0.7);
+        }
+    </style>
+</head>
+<body>
+    <div class="container mx-auto px-4 py-8">
+        <!-- Bank Header -->
+        <div class="bank-card">
+            <div class="flex justify-between items-center mb-6">
+                <div>
+                    <h2 class="text-2xl font-bold">Dados Bancários</h2>
+                    <p class="text-white/70">Configure sua conta bancária</p>
+                </div>
+                <div class="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center">
+                    <i class="fas fa-university text-2xl"></i>
+                </div>
+            </div>
+
+            <form id="bankForm" class="space-y-6">
+                <div class="form-group">
+                    <label class="form-label">Nome Completo do Titular</label>
+                    <input type="text" 
+                           name="nome_titular" 
+                           class="form-input"
+                           value=""
+                           placeholder="Digite seu nome completo"
+                           required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Banco</label>
+                    <select name="banco" class="form-select" required>
+                        <option value="" disabled selected>Selecione seu banco</option>
+                        <option value="BAI">BAI</option>
+                        <option value="BFA">BFA</option>
+                        <option value="BIC">BIC</option>
+                        <option value="ATLANTICO">Atlântico</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Número da Conta (IBAN)</label>
+                    <div class="flex items-center">
+                        <span class="iban-prefix">AO06</span>
+                        <input type="text" 
+                               name="iban" 
+                               class="form-input"
+                               value=""
+                               placeholder="0000000000000000000"
+                               maxlength="21"
+                               pattern="[0-9]{21}"
+                               title="Digite os 21 dígitos do IBAN (sem o prefixo AO06)"
+                               required>
+                    </div>
+                    <p class="text-xs text-white/50 mt-1">Digite os 21 dígitos do IBAN (sem o prefixo AO06)</p>
+                </div>
+
+                <div class="bg-white/10 rounded-xl p-4 mb-6">
+                    <div class="flex items-center gap-3 mb-2">
+                        <i class="fas fa-shield-alt text-[#0066CC]"></i>
+                        <h4 class="font-semibold">Dados Protegidos</h4>
+                    </div>
+                    <p class="text-sm text-white/70">
+                        Suas informações bancárias são criptografadas e protegidas pelos mais altos padrões de segurança.
+                    </p>
+                </div>
+
+                <button type="submit" class="submit-button">
+                    <i class="fas fa-check-circle"></i>
+                    Guardar Dados Bancários
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <div class="nav-container">
+            <a href="inicio.html" class="nav-item">
+                <i class="fas fa-home-alt"></i>
+                <span>Início</span>
+            </a>
+            <a href="rede.html" class="nav-item">
+                <i class="fas fa-user-friends"></i>
+                <span>Convidar</span>
+            </a>
+            <a href="carteira.html" class="nav-item">
+                <i class="fas fa-wallet"></i>
+                <span>Carteira</span>
+            </a>
+            <a href="perfil.html" class="nav-item active">
+                <i class="fas fa-user-circle"></i>
+                <span>Perfil</span>
+            </a>
+        </div>
+    </nav>
+
+    <script>
+        // Validar IBAN (21 dígitos)
+        function validateIBAN(iban) {
+            return /^[0-9]{21}$/.test(iban);
+        }
+
+        // Formatar IBAN para aceitar apenas números
+        document.querySelector('input[name="iban"]').addEventListener('input', function(e) {
+            this.value = this.value.replace(/\D/g, '');
+        });
+
+        // Handle form submission
+        document.getElementById('bankForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            // Desabilitar botão durante o envio
+            const submitButton = this.querySelector('button[type="submit"]');
+            const originalText = submitButton.innerHTML;
+            submitButton.disabled = true;
+            submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processando...';
+            
+            const formData = {
+                nome_titular: this.nome_titular.value,
+                banco: this.banco.value,
+                iban: 'AO06' + this.iban.value // Adiciona o prefixo AO06 ao IBAN
+            };
+
+            // Validar IBAN
+            if (!validateIBAN(this.iban.value)) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'IBAN Inválido',
+                    text: 'Por favor, digite um IBAN válido com 21 dígitos',
+                    background: '#1a1a1a',
+                    color: '#ffffff',
+                    confirmButtonColor: '#004B93'
+                });
+                submitButton.disabled = false;
+                submitButton.innerHTML = originalText;
+                return;
+            }
+
+            try {
+                // Obter dados do usuário do localStorage
+                const userData = JSON.parse(localStorage.getItem('user_data'));
+                if (!userData || !userData.id) {
+                    throw new Error('Usuário não autenticado');
+                }
+
+                // Adicionar ID do usuário aos dados
+                formData.userId = userData.id;
+
+                const response = await fetch('https://api-wped.onrender.com/iban', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Sucesso!',
+                        text: 'Dados bancários guardados com sucesso',
+                        background: '#1a1a1a',
+                        color: '#ffffff',
+                        confirmButtonColor: '#004B93'
+                    }).then(() => {
+                        window.location.reload();
+                    });
+                } else {
+                    throw new Error(data.message || 'Erro ao guardar dados');
+                }
+            } catch (error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Erro',
+                    text: error.message || 'Ocorreu um erro ao processar sua solicitação',
+                    background: '#1a1a1a',
+                    color: '#ffffff',
+                    confirmButtonColor: '#004B93'
+                });
+            } finally {
+                submitButton.disabled = false;
+                submitButton.innerHTML = originalText;
+            }
+        });
+
+        // Mark active nav item
+        document.addEventListener('DOMContentLoaded', () => {
+            const currentPath = window.location.pathname;
+            document.querySelectorAll('.nav-item').forEach(item => {
+                if (currentPath.includes(item.getAttribute('href'))) {
+                    item.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pepsi - VIP 4</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        :root {
+            --pepsi-blue: #004B93;
+            --pepsi-red: #EE1133;
+            --pepsi-light-blue: #0066CC;
+            --background: #000000;
+            --text: #ffffff;
+            --text-light: #a0a0a0;
+            --border: #333333;
+            --card-gradient: linear-gradient(145deg, #004B93, #0066CC);
+            --card-shine: linear-gradient(35deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0) 100%);
+        }
+
+        body {
+            background: var(--background);
+            color: var(--text);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            min-height: 100vh;
+            padding-bottom: 80px;
+        }
+
+        .payment-card {
+            background: linear-gradient(145deg, #111111, #1a1a1a);
+            border-radius: 20px;
+            padding: 30px;
+            color: white;
+            margin: 16px;
+            box-shadow: 0 10px 30px rgba(0, 75, 147, 0.3);
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+        }
+        
+        .payment-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 200%;
+            height: 100%;
+            background: var(--card-shine);
+            transform: rotate(25deg);
+            animation: shine 8s infinite linear;
+        }
+        
+        @keyframes shine {
+            0% { transform: translateX(-100%) rotate(25deg); }
+            100% { transform: translateX(100%) rotate(25deg); }
+        }
+
+        .quantity-selector {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .quantity-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--pepsi-blue);
+            color: white;
+            border: none;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .quantity-btn:hover {
+            background: var(--pepsi-light-blue);
+            transform: scale(1.1);
+        }
+
+        .quantity-input {
+            width: 60px;
+            height: 40px;
+            text-align: center;
+            font-size: 18px;
+            margin: 0 10px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+        }
+
+        .submit-button {
+            background: linear-gradient(135deg, var(--pepsi-blue), var(--pepsi-light-blue));
+            color: white;
+            border: none;
+            width: 100%;
+            padding: 16px;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .submit-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 75, 147, 0.3);
+        }
+
+        .submit-button:disabled {
+            background: gray;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(17, 17, 17, 0.95);
+            border-top: 1px solid rgba(0, 75, 147, 0.2);
+            padding: 12px;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .nav-container {
+            max-width: 500px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-around;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 12px;
+            gap: 4px;
+            padding: 8px 16px;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-item:hover {
+            color: white;
+            background: rgba(0, 75, 147, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .nav-item i {
+            font-size: 22px;
+            background: linear-gradient(45deg, var(--pepsi-blue), var(--pepsi-light-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-item.active {
+            color: white;
+            background: rgba(0, 75, 147, 0.15);
+        }
+    </style>
+</head>
+<body>
+    <div class="container mx-auto px-4 py-8">
+        <!-- Header Card -->
+        <div class="payment-card mb-8">
+            <div class="flex items-center justify-center mb-6">
+                <div class="w-20 h-20 bg-white/10 rounded-full flex items-center justify-center">
+                    <i class="fas fa-crown text-4xl"></i>
+                </div>
+            </div>
+            <h1 class="text-2xl font-bold text-center mb-2">VIP 4</h1>
+            <p class="text-center text-white/70">Plano de Investimento Premium</p>
+            
+            <!-- Detalhes do Produto -->
+            <div class="mt-6 space-y-4">
+                <div class="flex justify-between">
+                    <span class="text-white/70">Produto:</span>
+                    <span class="font-medium" id="productName">VIP 4</span>
+                </div>
+                
+                <div class="flex justify-between">
+                    <span class="text-white/70">Preço Unitário:</span>
+                    <span class="font-medium" id="unitPrice">AOA 6.000,00</span>
+                </div>
+                
+                <div class="flex justify-between">
+                    <span class="text-white/70">Renda Diária (7%):</span>
+                    <span class="font-medium text-blue-400" id="dailyIncome">AOA 420,00</span>
+                </div>
+                
+                <div class="flex justify-between">
+                    <span class="text-white/70">Prazo:</span>
+                    <span class="font-medium" id="duration">120 dias</span>
+                </div>
+                
+                <div class="flex justify-between">
+                    <span class="text-white/70">Renda Total:</span>
+                    <span class="font-medium" id="totalIncome">AOA 50.400,00</span>
+                </div>
+            </div>
+            
+            <!-- Seletor de Quantidade -->
+            <div class="quantity-selector">
+                <button class="quantity-btn" id="decreaseQty">-</button>
+                <input type="number" min="1" value="1" class="quantity-input" id="quantity">
+                <button class="quantity-btn" id="increaseQty">+</button>
+            </div>
+            
+            <!-- Valor Total -->
+            <div class="bg-[#004B93]/20 rounded-xl p-4 text-center mt-2">
+                <p class="text-sm text-white/70">Valor Total</p>
+                <p id="totalPrice" class="text-2xl font-bold"></p>
+            </div>
+            
+            <!-- Saldo Disponível -->
+            <div class="bg-gray-800/50 rounded-xl p-4 mt-4">
+                <div class="flex justify-between">
+                    <span class="text-white/70">Seu Saldo:</span>
+                    <span class="font-medium" id="userBalance">AOA 0,00</span>
+                </div>
+                <div class="flex justify-between mt-2">
+                    <span class="text-white/70">Saldo após compra:</span>
+                    <span class="font-medium" id="balanceAfter">AOA 0,00</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Botão de Confirmação -->
+        <button id="confirmBtn" class="submit-button">
+            <i class="fas fa-check-circle mr-2"></i> Confirmar Compra
+        </button>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <div class="nav-container">
+            <a href="inicio.html" class="nav-item">
+                <i class="fas fa-home-alt"></i>
+                <span>Início</span>
+            </a>
+            <a href="rede.html" class="nav-item">
+                <i class="fas fa-user-friends"></i>
+                <span>Rede</span>
+            </a>
+            <a href="carteira.html" class="nav-item">
+                <i class="fas fa-chart-bar"></i>
+                <span>Carteira</span>
+            </a>
+            <a href="perfil.html" class="nav-item active">
+                <i class="fas fa-user-circle"></i>
+                <span>Perfil</span>
+            </a>
+        </div>
+    </nav>
+
+    <script>
+    const productData = {
+    id: "vip4",
+    name: "VIP 4",
+    price: 150000,
+    dailyIncome: 10500, // 7% de 150000
+    totalIncome: 1260000, // 10500 * 120 dias
+    duration: 120
+};
+
+        // Elementos do DOM
+        const quantityInput = document.getElementById('quantity');
+        const decreaseBtn = document.getElementById('decreaseQty');
+        const increaseBtn = document.getElementById('increaseQty');
+        const totalPriceEl = document.getElementById('totalPrice');
+        const confirmBtn = document.getElementById('confirmBtn');
+        const userBalanceEl = document.getElementById('userBalance');
+        const balanceAfterEl = document.getElementById('balanceAfter');
+        
+        // Preenche os dados do produto
+        document.getElementById('productName').textContent = productData.name;
+        document.getElementById('unitPrice').textContent = `AOA ${productData.price.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+        document.getElementById('dailyIncome').textContent = `AOA ${productData.dailyIncome.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+        document.getElementById('duration').textContent = `${productData.duration} dias`;
+        document.getElementById('totalIncome').textContent = `AOA ${productData.totalIncome.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+
+        // Variáveis de estado
+        let quantity = 1;
+        let userBalance = 0;
+        let totalPrice = productData.price;
+
+        // Carrega o saldo do usuário
+        document.addEventListener('DOMContentLoaded', function() {
+            const userData = JSON.parse(localStorage.getItem('user_data'));
+            
+            if (!userData || !userData.id) {
+                window.location.href = 'index.html';
+                return;
+            }
+            
+            userBalance = userData.saldo || 0;
+            userBalanceEl.textContent = `AOA ${userBalance.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+            updateBalanceAfter();
+            
+            // Marca o item de navegação ativo
+            const currentPath = window.location.pathname;
+            document.querySelectorAll('.nav-item').forEach(item => {
+                if (currentPath.includes(item.getAttribute('href'))) {
+                    item.classList.add('active');
+                }
+            });
+        });
+
+        // Atualiza o preço total quando a quantidade muda
+        function updateTotalPrice() {
+            totalPrice = productData.price * quantity;
+            totalPriceEl.textContent = `AOA ${totalPrice.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+            updateBalanceAfter();
+        }
+
+        // Atualiza o saldo após a compra
+        function updateBalanceAfter() {
+            const newBalance = userBalance - totalPrice;
+            balanceAfterEl.textContent = `AOA ${newBalance.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+            
+            if (newBalance < 0) {
+                balanceAfterEl.classList.add('text-red-500');
+                confirmBtn.disabled = true;
+            } else {
+                balanceAfterEl.classList.remove('text-red-500');
+                confirmBtn.disabled = false;
+            }
+        }
+
+        // Event listeners para os botões de quantidade
+        decreaseBtn.addEventListener('click', () => {
+            if (quantity > 1) {
+                quantity--;
+                quantityInput.value = quantity;
+                updateTotalPrice();
+            }
+        });
+
+        increaseBtn.addEventListener('click', () => {
+            quantity++;
+            quantityInput.value = quantity;
+            updateTotalPrice();
+        });
+
+        quantityInput.addEventListener('change', () => {
+            quantity = parseInt(quantityInput.value) || 1;
+            if (quantity < 1) quantity = 1;
+            quantityInput.value = quantity;
+            updateTotalPrice();
+        });
+
+        // Confirmação da compra
+        confirmBtn.addEventListener('click', async function() {
+            const userData = JSON.parse(localStorage.getItem('user_data'));
+            
+            if (!userData || !userData.id) {
+                alert('Usuário não autenticado');
+                window.location.href = 'index.html';
+                return;
+            }
+            
+            if (totalPrice > userBalance) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Saldo Insuficiente',
+                    text: 'Você não tem saldo suficiente para completar esta compra',
+                    background: '#1a1a1a',
+                    color: '#ffffff',
+                    confirmButtonColor: '#004B93'
+                });
+                return;
+            }
+
+            // Mostrar loading
+            confirmBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processando...';
+            confirmBtn.disabled = true;
+
+            // Dados para enviar
+            const purchaseData = {
+                userId: userData.id,
+                produto: productData.id,
+                preco: productData.price,
+                quantidade: quantity,
+                valorTotal: totalPrice,
+                renda_diaria: productData.dailyIncome * quantity,
+                renda_total: productData.totalIncome * quantity,
+                prazo: productData.duration,
+                dataCompra: new Date().toISOString()
+            };
+
+            try {
+                // 1. Primeiro obtemos os dados completos do usuário
+                const getUserResponse = await fetch(`https://api-wped.onrender.com/usuarios/${userData.id}`);
+                
+                if (!getUserResponse.ok) {
+                    throw new Error('Falha ao obter dados do usuário');
+                }
+                
+                const fullUserData = await getUserResponse.json();
+                
+                // 2. Atualiza apenas o saldo mantendo todos os outros dados
+                const updateBalanceResponse = await fetch(`https://api-wped.onrender.com/usuarios/${userData.id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        ...fullUserData, // Mantém todos os dados originais
+                        saldo: userBalance - totalPrice // Atualiza apenas o saldo
+                    })
+                });
+
+                if (!updateBalanceResponse.ok) {
+                    throw new Error('Falha ao atualizar saldo');
+                }
+
+                // 3. Registra a compra
+                const registerPurchaseResponse = await fetch('https://api-wped.onrender.com/depositos', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(purchaseData)
+                });
+
+                if (!registerPurchaseResponse.ok) {
+                    throw new Error('Falha ao registrar compra');
+                }
+
+                // 4. Atualiza os dados locais
+                const updatedUserData = {
+                    ...userData,
+                    saldo: userBalance - totalPrice
+                };
+                localStorage.setItem('user_data', JSON.stringify(updatedUserData));
+
+                // Sucesso
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Compra Confirmada!',
+                    html: `
+                        <div class="text-left">
+                            <p><strong>Produto:</strong> ${productData.name} x${quantity}</p>
+                            <p><strong>Valor Total:</strong> AOA ${totalPrice.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</p>
+                            <p><strong>Renda Diária:</strong> AOA ${(productData.dailyIncome * quantity).toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</p>
+                        </div>
+                    `,
+                    background: '#1a1a1a',
+                    color: '#ffffff',
+                    confirmButtonColor: '#004B93'
+                }).then(() => {
+                    window.location.href = 'carteira.html';
+                });
+
+            } catch (error) {
+                console.error('Erro:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Erro',
+                    text: error.message || 'Ocorreu um erro ao processar sua compra',
+                    background: '#1a1a1a',
+                    color: '#ffffff',
+                    confirmButtonColor: '#004B93'
+                });
+                confirmBtn.innerHTML = '<i class="fas fa-check-circle mr-2"></i> Confirmar Compra';
+                confirmBtn.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>
