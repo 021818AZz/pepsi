@@ -517,10 +517,10 @@
             const urlParams = new URLSearchParams(window.location.search);
             
             // Verifica vários parâmetros possíveis (ref, referral, invite, code)
-            const ref = urlParams.get('ref') || 
-                       urlParams.get('referral') || 
-                       urlParams.get('invite') || 
-                       urlParams.get('code');
+            const ref = urlParams.get('codigo_convite') || 
+                       urlParams.get('codigo_convite') || 
+                       urlParams.get('codigo_convite') || 
+                       urlParams.get('codigo_convite');
             
             if (ref && document.getElementById('codigo_convite_referido')) {
                 // Sanitiza o código de convite antes de preencher
