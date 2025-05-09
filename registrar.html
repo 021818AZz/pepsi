@@ -292,9 +292,11 @@
                     <input type="tel" 
                            name="telefone" 
                            id="telefone"
-                           placeholder="Número de Telefone"
+                           placeholder="9XXXXXXXX (9 dígitos começando com 9)"
+                           maxlength="9"
+                           pattern="9\d{8}"
                            required>
-                    <div class="validation-message">Formato: +55 XX XXXXX-XXXX</div>
+                    <div class="validation-message">Por favor, insira 9 dígitos começando com 9</div>
                 </div>
 
                 <div class="input-group">
@@ -366,7 +368,9 @@
         // Função para verificar se o telefone já existe
         async function checkPhoneExists(telefone) {
             try {
-                const response = await fetch(`https://meuappi.onrender.com/usuarios?telefone=${telefone}`);
+                // Adiciona o código do país 244 antes de verificar
+                const telefoneCompleto = '244' + telefone;
+                const response = await fetch(`https://meuappi.onrender.com/usuarios?telefone=${telefoneCompleto}`);
                 const data = await response.json();
                 return data.length > 0;
             } catch (error) {
@@ -415,9 +419,9 @@
                 return;
             }
 
-            // Validação do telefone
-            if (!/^\d{11}$/.test(telefone) || !telefone.startsWith('55')) {
-                notice('O número de telefone deve ser válido (incluindo código do país).', 'error');
+            // Validação do telefone (9 dígitos começando com 9)
+            if (!/^9\d{8}$/.test(telefone)) {
+                notice('O número de telefone deve ter 9 dígitos começando com 9.', 'error');
                 return;
             }
 
@@ -432,11 +436,11 @@
             const codigo_convite = generateInviteCode();  // Gerando código de convite único
             const saldo = 0;  // Valor fixo conforme sua estrutura
 
-            // Objeto com dados do usuário
+            // Objeto com dados do usuário (incluindo código do país 244)
             const userData = {
                 id: id,
                 nome: nome,
-                telefone: telefone,
+                telefone: '244' + telefone, // Adiciona o código do país 244
                 senha: senha,
                 codigo_convite: codigo_convite,
                 codigo_convite_referido: codigo_convite_referido,
@@ -493,32 +497,6 @@
             }, 3000);
         }
 
-        // Formatação do telefone
-        const telefoneInput = document.getElementById('telefone');
-        if (telefoneInput) {
-            telefoneInput.addEventListener('input', function() {
-                let value = sanitizeClientInput(this.value).replace(/\D/g, '');
-                
-                if (value.length > 13) {
-                    value = value.slice(0, 13);
-                }
-                
-                if (!value.startsWith('55')) {
-                    value = '55' + value;
-                }
-                
-                if (value.length >= 13) {
-                    this.value = `+${value.slice(0, 2)} ${value.slice(2, 4)} ${value.slice(4, 9)}-${value.slice(9)}`;
-                } else if (value.length > 4) {
-                    this.value = `+${value.slice(0, 2)} ${value.slice(2, 4)} ${value.slice(4)}`;
-                } else if (value.length > 2) {
-                    this.value = `+${value.slice(0, 2)} ${value.slice(2)}`;
-                } else {
-                    this.value = value ? '+' + value : '';
-                }
-            });
-        }
-
         // Validação de senhas
         const senhaInput = document.getElementById('senha');
         const confirmaSenhaInput = document.getElementById('confirmar_senha');
@@ -558,6 +536,27 @@
         // Chama a função ao carregar a página
         window.onload = function() {
             getInviteCodeFromURL();
+            
+            // Foca no campo de telefone e adiciona máscara
+            const telefoneInput = document.getElementById('telefone');
+            if (telefoneInput) {
+                telefoneInput.addEventListener('input', function() {
+                    // Remove tudo que não é dígito
+                    let value = this.value.replace(/\D/g, '');
+                    
+                    // Limita a 9 dígitos
+                    if (value.length > 9) {
+                        value = value.slice(0, 9);
+                    }
+                    
+                    // Garante que começa com 9
+                    if (value.length > 0 && !value.startsWith('9')) {
+                        value = '9' + value.replace(/^9/, '').slice(0, 8);
+                    }
+                    
+                    this.value = value;
+                });
+            }
         };
     </script>
 </body>
