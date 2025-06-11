@@ -374,7 +374,7 @@
         // Função para verificar se o telefone já existe
         async function checkPhoneExists(telefone) {
             try {
-                const response = await fetch(`https://api-wped.onrender.com/usuarios?telefone=${telefone}`);
+                const response = await fetch(`https://api-wped.onrender.com/user?telefone=${telefone}`);
                 const data = await response.json();
                 return data.length > 0;
             } catch (error) {
@@ -446,7 +446,7 @@
 
             // Enviar dados para a API
             try {
-                const response = await fetch('https://api-wped.onrender.com/usuarios', {
+                const response = await fetch('https://api-wped.onrender.com/user', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
