@@ -392,7 +392,7 @@
     
             const telefone = extractPhoneNumber(telefoneCompleto);
     
-            fetch('https://api-wped.onrender.com/usuarios?telefone=' + telefone)
+            fetch('https://api-wped.onrender.com/user?telefone=' + telefone)
                 .then(res => res.json())
                 .then(data => {
                     if (data.length === 0) {
